@@ -1,0 +1,53 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "MeshInstance",
+"class": "Body",
+"language": "GDScript",
+"path": "res://Body.gd"
+}, {
+"base": "ImmediateGeometry",
+"class": "Line3D",
+"language": "GDScript",
+"path": "res://Line3D.gd"
+}, {
+"base": "Spatial",
+"class": "OrbitController",
+"language": "GDScript",
+"path": "res://Spatial.gd"
+} ]
+_global_script_class_icons={
+"Body": "res://Body.svg",
+"Line3D": "res://Line.svg",
+"OrbitController": ""
+}
+
+[application]
+
+config/name="Orbits"
+run/main_scene="res://Spatial.tscn"
+config/icon="res://icon.png"
+
+[display]
+
+window/vsync/use_vsync=false
+
+[global]
+
+vsy=false
+
+[physics]
+
+common/enable_pause_aware_picking=true
+
+[rendering]
+
+environment/default_environment="res://default_env.tres"

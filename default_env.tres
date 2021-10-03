@@ -1,0 +1,17 @@
+[gd_resource type="Environment" load_steps=3 format=2]
+
+[ext_resource path="res://hdr.png" type="Texture" id=1]
+
+[sub_resource type="PanoramaSky" id=1]
+panorama = ExtResource( 1 )
+
+[resource]
+background_mode = 2
+background_sky = SubResource( 1 )
+ambient_light_color = Color( 1, 1, 1, 1 )
+ambient_light_energy = 16.0
+tonemap_mode = 2
+auto_exposure_enabled = true
+auto_exposure_speed = 3.14
+glow_bloom = 1.0
+adjustment_saturation = 3.26
