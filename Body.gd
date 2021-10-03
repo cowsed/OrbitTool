@@ -1,30 +1,26 @@
-tool
-#Body.gd
-
 extends MeshInstance
 
-class_name Body, "res://Body.svg"
-
+class_name Body, "Body.svg"
 
 
 export(float) var Mass: float = 5.9e12  setget SetMass# #In kgs Mass of the Body
 #export var MassScale = 1e12  #Mass*MassScale = actual Mass
 
-export(float) var Radius: float = 1000 setget SetRadius, GetRadius #In m. Radius of the body
+export(float) var Radius: float = 1000 #In KM, the radius of the body
 
-export(bool) var IsStar = false setget SetStar, GetIsStar
-export(float) var Period = 2 setget SetPeriod
-export(Color, RGBA) var Col setget SetCol, GetCol
+export(bool) var IsStar = false 
+export(float) var Period = 1
+export(Color, RGBA) var Col 
 
-export var SemiMajorAxis: float = 10 setget SetSMA
-export(float,0,1) var eccentricity: float = .0 setget SetE
-export var loan: float = 0.0  setget SetLOAN#longitude of ascending node
+export var SemiMajorAxis: float = 10 
+export(float,0,1) var eccentricity: float = .0
+export var loan: float = 0.0  #longitude of ascending node
 export var offsettAng = 0.0
-export var ShowOrbit = true setget SetOrbitVis
+export var ShowOrbit = true 
 export var Static = true #if true, is a planet, if false, can be influenced and enter other spheres of influence
  
 export var focus = false setget SetFocus
-onready var Controller
+onready var Controller = get_tree().root.get_node("Spatial")
 
 const DistanceScale = 0.001 #KM to scene units
 const OUTERSOI = 1_000_000 #the size for an unconstrained? soi 
@@ -34,10 +30,37 @@ var IsOuter = false
 
 func is_type(type): return type == "Body" or .is_type(type)
 func    get_type(): return "Body"
+func get_class(): return "Body"
 
 var OrbitRep = Line3D.new()
 var SOIRep = MeshInstance.new()
+var Clicker = Area.new()
+var ClickerSphere = CollisionShape.new()
 
+signal SelfSelected(s)
+
+func _ready():
+	OrbitRep.set_name(name+"-OrbitRepresentation")
+	get_parent().call_deferred("add_child",OrbitRep)
+	
+	SOIRep.set_name(name+"-SOIRepresentation")
+	add_child(SOIRep)
+	Clicker.set_name(name+"-Area")
+	ClickerSphere.set_name(name+"-Sphere")	
+	Clicker.add_child(ClickerSphere)
+	#connect clicker to signal
+	add_child(Clicker)
+	Clicker.connect("input_event", self, "wasClicked")
+	
+	self.connect("SelfSelected", Controller,"BodySelected")
+	print(Controller)
+
+func wasClicked(_camera, event, _click_position, _click_normal, _shape_idx):
+	if event is InputEventMouseButton:
+		if event.button_index == BUTTON_LEFT:
+			emit_signal("SelfSelected",self)
+			
+	
 
 func CalcVelocityAt(r: float):
 
@@ -63,7 +86,7 @@ func AtPos(t: float):
 	var a=SemiMajorAxis
 	#var b=calcB()
 	var e = eccentricity
-	var v = t*Period+offsettAng
+	var v = t/Period+offsettAng
 	var p#: Vector3 = Vector3(cos(v)*a,0,sin(v)*b)
 	var r = (a* (1-pow(e,2))  /  (1+e*cos(v)))
 	p=Vector3(cos(v)*r, 0, sin(v)*r)
@@ -82,7 +105,7 @@ func MakeOrbitRep():
 	var res=.01;
 	var t=0
 	while t<2*PI:
-		var p = AtPos(t/Period+offsettAng)
+		var p = AtPos(t*Period+offsettAng)
 		#add p to line
 		OrbitRep.AddPoint(p)
 		t+=res
@@ -90,16 +113,7 @@ func MakeOrbitRep():
 
 
 # Called when the node enters the scene tree for the first time.
-func _ready():
 
-	#GenerateMesh()
-	#GenerateSOIMesh()
-	OrbitRep.set_name(name+"-OrbitRepresentation")
-	get_parent().call_deferred("add_child",OrbitRep)
-	
-	SOIRep.set_name(name+"-SOIRepresentation")
-	add_child(SOIRep)
-	#print("Velocity At",CalcVelocityAt(AtPos(0).length()))
 
 func CalcSOI():
 	if Parent==null:
@@ -137,17 +151,12 @@ func SetSOIMesh():
 	SOIRep.mesh.radius=r*DistanceScale
 	SOIRep.mesh.height=2*SOIRep.mesh.radius
 
-func _notification(what):
-	# Snap the global position to a 32x32 grid
-	if (what == NOTIFICATION_TRANSFORM_CHANGED):
-		var r1 = (translation-Parent.translation).length()
-		#peri=a*(1-e)
-		SemiMajorAxis = r1/(1-eccentricity)
-		MakeOrbitRep()
+
 		
-func _process(delta):
+func _process(_delta):
 	#if Controller==null:
-	#	Controller=get_tree().root.get_node("Spatial")
+		
+		
 	if Parent==null:
 		print_debug("Problematic")
 		Parent=get_parent()
@@ -172,21 +181,21 @@ func _process(delta):
 		global_transform.origin=Parent.global_transform.origin+RelativePos
 	
 	
-func SetRadius(newR):
-	Radius=newR
-	GenerateMesh()
-func GetRadius():
-	return Radius
-
 func GenerateMesh():
 	mesh=SphereMesh.new()
 	mesh.material = SpatialMaterial.new()
+	ClickerSphere.shape = SphereShape.new()
 	SetMesh()
 	SetMaterial()
+
+	
 func SetMesh():
 	mesh.radius=Radius*DistanceScale
 	mesh.height=2*mesh.radius
-
+	
+	if ClickerSphere.shape!=null:
+		print(ClickerSphere.shape)
+		ClickerSphere.shape.radius = mesh.radius
 
 
 func SetMaterial():
@@ -226,9 +235,6 @@ func SetMass(nm):
 	Mass=nm#*MassScale
 	if Parent!=null:
 		SetSOIMesh()
-func SetMassScale(ns):
-	#MassScale=ns
-	SetSOIMesh()
 	
 func SetSMA(n):
 	SemiMajorAxis=n

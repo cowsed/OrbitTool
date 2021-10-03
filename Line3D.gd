@@ -1,6 +1,6 @@
 extends ImmediateGeometry
 
-class_name Line3D, "res://Line.svg"
+class_name Line3D, "Line.svg"
 
 var Points: PoolVector3Array
 var Center: Vector3

@@ -1,74 +1,305 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://Spatial.gd" type="Script" id=1]
-[ext_resource path="res://Body.gd" type="Script" id=2]
-[ext_resource path="res://Line3D.gd" type="Script" id=3]
+[ext_resource path="res://Controller.gd" type="Script" id=1]
+[ext_resource path="res://ControlDialog.gd" type="Script" id=2]
+[ext_resource path="res://ControlCamera.gd" type="Script" id=3]
 
-[sub_resource type="SpatialMaterial" id=1]
-albedo_color = Color( 0.27451, 0.760784, 0, 1 )
-
-[sub_resource type="SphereMesh" id=2]
-material = SubResource( 1 )
-radius = 6.378
-height = 12.756
-
-[sub_resource type="SpatialMaterial" id=3]
-albedo_color = Color( 0.458824, 0.501961, 0.631373, 1 )
-
-[sub_resource type="SphereMesh" id=4]
-material = SubResource( 3 )
-radius = 1.737
-height = 3.474
-
-[sub_resource type="SpatialMaterial" id=5]
-flags_unshaded = true
-flags_no_depth_test = true
-albedo_color = Color( 0.933333, 0, 0, 1 )
-
-[sub_resource type="SphereMesh" id=6]
-material = SubResource( 5 )
+[sub_resource type="SphereMesh" id=1]
+radius = 0.1
+height = 0.2
 
 [node name="Spatial" type="Spatial"]
 script = ExtResource( 1 )
 
-[node name="Planet" type="MeshInstance" parent="."]
-mesh = SubResource( 2 )
-material/0 = null
-script = ExtResource( 2 )
-Mass = 8.14e+10
-Radius = 6378.0
-Period = 2.125
-Col = Color( 0.27451, 0.760784, 0, 1 )
-SemiMajorAxis = 0.0
+[node name="AdderDialogue" type="WindowDialog" parent="."]
+visible = true
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -184.0
+margin_top = -66.0
+margin_right = 230.0
+margin_bottom = 154.0
+size_flags_vertical = 3
+popup_exclusive = true
+window_title = "Add Body"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Moon1" type="MeshInstance" parent="Planet"]
-transform = Transform( 1.00001, -1.86265e-09, 0, 1.86265e-09, 1.00001, 0, 0, 0, 1, -0.0739806, 0, 363.267 )
-mesh = SubResource( 4 )
-material/0 = null
-script = ExtResource( 2 )
-Mass = 1e+09
-Radius = 1737.0
-Period = 20323.4
-Col = Color( 0.458824, 0.501961, 0.631373, 1 )
-SemiMajorAxis = 384.41
-eccentricity = 0.055
-loan = -1.571
+[node name="ParameterHolder" type="VBoxContainer" parent="AdderDialogue"]
+anchor_right = 1.0
+anchor_bottom = 1.35
+margin_right = -3.05176e-05
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Body" type="MeshInstance" parent="Planet"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 217.34, 0, 0 )
-mesh = SubResource( 6 )
-material/0 = null
-script = ExtResource( 2 )
-Mass = 0.0
-Period = 8640.0
-Col = Color( 0.933333, 0, 0, 1 )
-SemiMajorAxis = 217.34
-Static = false
-focus = true
+[node name="BodyName" type="LineEdit" parent="AdderDialogue/ParameterHolder"]
+margin_right = 413.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+placeholder_text = "Body Name"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Camera" type="Camera" parent="."]
-transform = Transform( -4.37114e-08, 1, 4.37114e-08, 0, -4.37114e-08, 1, 1, 4.37114e-08, 1.91069e-15, 0, 555.842, 0 )
+[node name="SemiMajorAxis" type="LineEdit" parent="AdderDialogue/ParameterHolder"]
+margin_top = 28.0
+margin_right = 413.0
+margin_bottom = 52.0
+size_flags_horizontal = 3
+placeholder_text = "a (KM)"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Eccentricity" type="LineEdit" parent="AdderDialogue/ParameterHolder"]
+margin_top = 56.0
+margin_right = 413.0
+margin_bottom = 80.0
+size_flags_horizontal = 3
+placeholder_text = "Eccentricity"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Radius" type="LineEdit" parent="AdderDialogue/ParameterHolder"]
+margin_top = 84.0
+margin_right = 413.0
+margin_bottom = 108.0
+size_flags_horizontal = 3
+placeholder_text = "Radius (KM)"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Mass" type="LineEdit" parent="AdderDialogue/ParameterHolder"]
+margin_top = 112.0
+margin_right = 413.0
+margin_bottom = 136.0
+size_flags_horizontal = 3
+placeholder_text = "Mass"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="AdderDialogue/ParameterHolder"]
+margin_top = 140.0
+margin_right = 413.0
+margin_bottom = 160.0
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="AdderDialogue/ParameterHolder/HBoxContainer"]
+margin_top = 3.0
+margin_right = 204.0
+margin_bottom = 17.0
+size_flags_horizontal = 3
+text = "Body Color"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="AdderDialogue/ParameterHolder/HBoxContainer"]
+margin_left = 208.0
+margin_right = 413.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+
+[node name="ConfirmDeny" type="HBoxContainer" parent="AdderDialogue"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = -45.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CancelButton" type="Button" parent="AdderDialogue/ConfirmDeny"]
+margin_right = 205.0
+margin_bottom = 45.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Cancel"
+
+[node name="ConfirmButton" type="Button" parent="AdderDialogue/ConfirmDeny"]
+margin_left = 209.0
+margin_right = 414.0
+margin_bottom = 45.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "Confirm"
+
+[node name="ControlDialog" type="WindowDialog" parent="."]
+visible = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 826.0
+window_title = "Settings"
+resizable = true
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ControlDialog"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TimeWarpLabel" type="Label" parent="ControlDialog/VBoxContainer"]
+margin_right = 198.0
+margin_bottom = 14.0
+text = "Time Scale: 1"
+
+[node name="TimeSlider" type="HSlider" parent="ControlDialog/VBoxContainer"]
+margin_top = 18.0
+margin_right = 198.0
+margin_bottom = 34.0
+max_value = 1e+06
+step = 0.001
+
+[node name="AddBodyButton" type="Button" parent="ControlDialog/VBoxContainer"]
+margin_top = 38.0
+margin_right = 198.0
+margin_bottom = 58.0
+text = "Add Body"
+
+[node name="Tree" type="Tree" parent="ControlDialog/VBoxContainer"]
+margin_top = 62.0
+margin_right = 198.0
+margin_bottom = 329.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/draw_guides = 0
+
+[node name="BodyStats" type="VBoxContainer" parent="ControlDialog/VBoxContainer"]
+margin_top = 333.0
+margin_right = 198.0
+margin_bottom = 600.0
+size_flags_vertical = 3
+
+[node name="HEccentricity" type="HSplitContainer" parent="ControlDialog/VBoxContainer/BodyStats"]
+margin_right = 198.0
+margin_bottom = 24.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EccLabel" type="Label" parent="ControlDialog/VBoxContainer/BodyStats/HEccentricity"]
+margin_top = 5.0
+margin_right = 25.0
+margin_bottom = 19.0
+text = "Ecc:"
+
+[node name="Eccentricity" type="LineEdit" parent="ControlDialog/VBoxContainer/BodyStats/HEccentricity"]
+margin_left = 37.0
+margin_right = 198.0
+margin_bottom = 24.0
+
+[node name="HName" type="HSplitContainer" parent="ControlDialog/VBoxContainer/BodyStats"]
+margin_top = 28.0
+margin_right = 198.0
+margin_bottom = 52.0
+
+[node name="NameLabel" type="Label" parent="ControlDialog/VBoxContainer/BodyStats/HName"]
+margin_top = 5.0
+margin_right = 42.0
+margin_bottom = 19.0
+text = "Name:"
+
+[node name="Name" type="LineEdit" parent="ControlDialog/VBoxContainer/BodyStats/HName"]
+margin_left = 54.0
+margin_right = 198.0
+margin_bottom = 24.0
+
+[node name="HSMA" type="HSplitContainer" parent="ControlDialog/VBoxContainer/BodyStats"]
+margin_top = 56.0
+margin_right = 198.0
+margin_bottom = 80.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SMALabel" type="Label" parent="ControlDialog/VBoxContainer/BodyStats/HSMA"]
+margin_top = 5.0
+margin_right = 32.0
+margin_bottom = 19.0
+text = "SMA:"
+
+[node name="SemiMajorAxis" type="LineEdit" parent="ControlDialog/VBoxContainer/BodyStats/HSMA"]
+margin_left = 44.0
+margin_right = 198.0
+margin_bottom = 24.0
+
+[node name="HRadius" type="HSplitContainer" parent="ControlDialog/VBoxContainer/BodyStats"]
+margin_top = 84.0
+margin_right = 198.0
+margin_bottom = 108.0
+
+[node name="RadiusLabel" type="Label" parent="ControlDialog/VBoxContainer/BodyStats/HRadius"]
+margin_top = 5.0
+margin_right = 42.0
+margin_bottom = 19.0
+text = "Radius"
+
+[node name="Radius" type="LineEdit" parent="ControlDialog/VBoxContainer/BodyStats/HRadius"]
+margin_left = 54.0
+margin_right = 198.0
+margin_bottom = 24.0
+
+[node name="HMass" type="HSplitContainer" parent="ControlDialog/VBoxContainer/BodyStats"]
+margin_top = 112.0
+margin_right = 198.0
+margin_bottom = 136.0
+
+[node name="MassLabel" type="Label" parent="ControlDialog/VBoxContainer/BodyStats/HMass"]
+margin_top = 5.0
+margin_right = 37.0
+margin_bottom = 19.0
+text = "Mass:"
+
+[node name="Mass" type="LineEdit" parent="ControlDialog/VBoxContainer/BodyStats/HMass"]
+margin_left = 49.0
+margin_right = 198.0
+margin_bottom = 24.0
+
+[node name="HPeriod" type="HSplitContainer" parent="ControlDialog/VBoxContainer/BodyStats"]
+margin_top = 140.0
+margin_right = 198.0
+margin_bottom = 164.0
+
+[node name="PeriodLabel" type="Label" parent="ControlDialog/VBoxContainer/BodyStats/HPeriod"]
+margin_top = 5.0
+margin_right = 45.0
+margin_bottom = 19.0
+text = "Period:"
+
+[node name="Period" type="LineEdit" parent="ControlDialog/VBoxContainer/BodyStats/HPeriod"]
+margin_left = 57.0
+margin_right = 198.0
+margin_bottom = 24.0
+
+[node name="SystemOrigin" type="Spatial" parent="."]
+
+[node name="Camera" type="Camera" parent="SystemOrigin"]
+transform = Transform( -4.37114e-08, 1, 4.37114e-08, 0, -4.37114e-08, 1, 1, 4.37114e-08, 1.91069e-15, 0, 8.47562, 0 )
 far = 1500.0
-
-[node name="Line3D" type="ImmediateGeometry" parent="."]
 script = ExtResource( 3 )
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+mesh = SubResource( 1 )
+material/0 = null
+
+[connection signal="pressed" from="AdderDialogue/ConfirmDeny/CancelButton" to="ControlDialog" method="_on_AddBody_CancelButton_pressed"]
+[connection signal="pressed" from="AdderDialogue/ConfirmDeny/ConfirmButton" to="ControlDialog" method="_on_AddBody_ConfirmButton_pressed"]
+[connection signal="popup_hide" from="ControlDialog" to="ControlDialog" method="_on_ControlDialog_popup_hide"]
+[connection signal="value_changed" from="ControlDialog/VBoxContainer/TimeSlider" to="." method="_on_TimeSlider_value_changed"]
+[connection signal="pressed" from="ControlDialog/VBoxContainer/AddBodyButton" to="ControlDialog" method="_on_Button_pressed"]
