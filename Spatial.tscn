@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Controller.gd" type="Script" id=1]
 [ext_resource path="res://ControlDialog.gd" type="Script" id=2]
-[ext_resource path="res://ControlCamera.gd" type="Script" id=3]
+[ext_resource path="res://CameraHolder.gd" type="Script" id=3]
 
 [sub_resource type="SphereMesh" id=1]
 radius = 0.1
@@ -163,8 +163,11 @@ text = "Time Scale: 1"
 margin_top = 18.0
 margin_right = 198.0
 margin_bottom = 34.0
-max_value = 1e+06
+max_value = 1e+08
 step = 0.001
+__meta__ = {
+"_editor_description_": " "
+}
 
 [node name="AddBodyButton" type="Button" parent="ControlDialog/VBoxContainer"]
 margin_top = 38.0
@@ -172,127 +175,186 @@ margin_right = 198.0
 margin_bottom = 58.0
 text = "Add Body"
 
-[node name="Tree" type="Tree" parent="ControlDialog/VBoxContainer"]
+[node name="VSplit" type="VSplitContainer" parent="ControlDialog/VBoxContainer"]
 margin_top = 62.0
-margin_right = 198.0
-margin_bottom = 329.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_constants/draw_guides = 0
-
-[node name="BodyStats" type="VBoxContainer" parent="ControlDialog/VBoxContainer"]
-margin_top = 333.0
 margin_right = 198.0
 margin_bottom = 600.0
 size_flags_vertical = 3
 
-[node name="HEccentricity" type="HSplitContainer" parent="ControlDialog/VBoxContainer/BodyStats"]
+[node name="Tree" type="Tree" parent="ControlDialog/VBoxContainer/VSplit"]
+margin_right = 198.0
+margin_bottom = 263.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/relationship_line_color = Color( 1, 1, 1, 1 )
+custom_constants/draw_guides = 0
+custom_constants/draw_relationship_lines = 1
+
+[node name="BodyStats" type="VBoxContainer" parent="ControlDialog/VBoxContainer/VSplit"]
+margin_top = 275.0
+margin_right = 198.0
+margin_bottom = 538.0
+size_flags_vertical = 3
+
+[node name="HName" type="HSplitContainer" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
 margin_right = 198.0
 margin_bottom = 24.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
-[node name="EccLabel" type="Label" parent="ControlDialog/VBoxContainer/BodyStats/HEccentricity"]
-margin_top = 5.0
-margin_right = 25.0
-margin_bottom = 19.0
-text = "Ecc:"
-
-[node name="Eccentricity" type="LineEdit" parent="ControlDialog/VBoxContainer/BodyStats/HEccentricity"]
-margin_left = 37.0
-margin_right = 198.0
-margin_bottom = 24.0
-
-[node name="HName" type="HSplitContainer" parent="ControlDialog/VBoxContainer/BodyStats"]
-margin_top = 28.0
-margin_right = 198.0
-margin_bottom = 52.0
-
-[node name="NameLabel" type="Label" parent="ControlDialog/VBoxContainer/BodyStats/HName"]
+[node name="NameLabel" type="Label" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HName"]
 margin_top = 5.0
 margin_right = 42.0
 margin_bottom = 19.0
 text = "Name:"
 
-[node name="Name" type="LineEdit" parent="ControlDialog/VBoxContainer/BodyStats/HName"]
+[node name="Name" type="LineEdit" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HName"]
 margin_left = 54.0
 margin_right = 198.0
 margin_bottom = 24.0
 
-[node name="HSMA" type="HSplitContainer" parent="ControlDialog/VBoxContainer/BodyStats"]
-margin_top = 56.0
+[node name="OrbitStatsLabel" type="Label" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
+margin_top = 28.0
 margin_right = 198.0
-margin_bottom = 80.0
+margin_bottom = 42.0
+text = "Orbit Properties:"
+
+[node name="HEccentricity" type="HSplitContainer" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
+margin_top = 46.0
+margin_right = 198.0
+margin_bottom = 70.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="SMALabel" type="Label" parent="ControlDialog/VBoxContainer/BodyStats/HSMA"]
+[node name="EccLabel" type="Label" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HEccentricity"]
+margin_top = 5.0
+margin_right = 25.0
+margin_bottom = 19.0
+text = "Ecc:"
+
+[node name="Eccentricity" type="LineEdit" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HEccentricity"]
+margin_left = 37.0
+margin_right = 198.0
+margin_bottom = 24.0
+
+[node name="HSMA" type="HSplitContainer" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
+margin_top = 74.0
+margin_right = 198.0
+margin_bottom = 98.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SMALabel" type="Label" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HSMA"]
 margin_top = 5.0
 margin_right = 32.0
 margin_bottom = 19.0
 text = "SMA:"
 
-[node name="SemiMajorAxis" type="LineEdit" parent="ControlDialog/VBoxContainer/BodyStats/HSMA"]
+[node name="SemiMajorAxis" type="LineEdit" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HSMA"]
 margin_left = 44.0
 margin_right = 198.0
 margin_bottom = 24.0
 
-[node name="HRadius" type="HSplitContainer" parent="ControlDialog/VBoxContainer/BodyStats"]
-margin_top = 84.0
+[node name="HPeriod" type="HSplitContainer" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
+margin_top = 102.0
 margin_right = 198.0
-margin_bottom = 108.0
+margin_bottom = 126.0
 
-[node name="RadiusLabel" type="Label" parent="ControlDialog/VBoxContainer/BodyStats/HRadius"]
-margin_top = 5.0
-margin_right = 42.0
-margin_bottom = 19.0
-text = "Radius"
-
-[node name="Radius" type="LineEdit" parent="ControlDialog/VBoxContainer/BodyStats/HRadius"]
-margin_left = 54.0
-margin_right = 198.0
-margin_bottom = 24.0
-
-[node name="HMass" type="HSplitContainer" parent="ControlDialog/VBoxContainer/BodyStats"]
-margin_top = 112.0
-margin_right = 198.0
-margin_bottom = 136.0
-
-[node name="MassLabel" type="Label" parent="ControlDialog/VBoxContainer/BodyStats/HMass"]
-margin_top = 5.0
-margin_right = 37.0
-margin_bottom = 19.0
-text = "Mass:"
-
-[node name="Mass" type="LineEdit" parent="ControlDialog/VBoxContainer/BodyStats/HMass"]
-margin_left = 49.0
-margin_right = 198.0
-margin_bottom = 24.0
-
-[node name="HPeriod" type="HSplitContainer" parent="ControlDialog/VBoxContainer/BodyStats"]
-margin_top = 140.0
-margin_right = 198.0
-margin_bottom = 164.0
-
-[node name="PeriodLabel" type="Label" parent="ControlDialog/VBoxContainer/BodyStats/HPeriod"]
+[node name="PeriodLabel" type="Label" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HPeriod"]
 margin_top = 5.0
 margin_right = 45.0
 margin_bottom = 19.0
 text = "Period:"
 
-[node name="Period" type="LineEdit" parent="ControlDialog/VBoxContainer/BodyStats/HPeriod"]
+[node name="Period" type="LineEdit" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HPeriod"]
 margin_left = 57.0
+margin_right = 198.0
+margin_bottom = 24.0
+
+[node name="HLoan" type="HSplitContainer" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
+margin_top = 130.0
+margin_right = 198.0
+margin_bottom = 154.0
+
+[node name="LoanLabel" type="Label" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HLoan"]
+margin_top = 5.0
+margin_right = 30.0
+margin_bottom = 19.0
+text = "Loan"
+
+[node name="Loan" type="LineEdit" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HLoan"]
+margin_left = 42.0
+margin_right = 198.0
+margin_bottom = 24.0
+
+[node name="BodyPropertiesLabel" type="Label" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
+margin_top = 158.0
+margin_right = 198.0
+margin_bottom = 172.0
+text = "Body Properties:"
+
+[node name="HRadius" type="HSplitContainer" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
+margin_top = 176.0
+margin_right = 198.0
+margin_bottom = 200.0
+
+[node name="RadiusLabel" type="Label" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HRadius"]
+margin_top = 5.0
+margin_right = 42.0
+margin_bottom = 19.0
+text = "Radius"
+
+[node name="Radius" type="LineEdit" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HRadius"]
+margin_left = 54.0
+margin_right = 198.0
+margin_bottom = 24.0
+
+[node name="HColor" type="HSplitContainer" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
+margin_top = 204.0
+margin_right = 198.0
+margin_bottom = 224.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorLabel" type="Label" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HColor"]
+margin_top = 3.0
+margin_right = 73.0
+margin_bottom = 17.0
+text = "Body Color:"
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HColor"]
+margin_left = 85.0
+margin_right = 198.0
+margin_bottom = 20.0
+
+[node name="HMass" type="HSplitContainer" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
+margin_top = 228.0
+margin_right = 198.0
+margin_bottom = 252.0
+
+[node name="MassLabel" type="Label" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HMass"]
+margin_top = 5.0
+margin_right = 37.0
+margin_bottom = 19.0
+text = "Mass:"
+
+[node name="Mass" type="LineEdit" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HMass"]
+margin_left = 49.0
 margin_right = 198.0
 margin_bottom = 24.0
 
 [node name="SystemOrigin" type="Spatial" parent="."]
 
-[node name="Camera" type="Camera" parent="SystemOrigin"]
-transform = Transform( -4.37114e-08, 1, 4.37114e-08, 0, -4.37114e-08, 1, 1, 4.37114e-08, 1.91069e-15, 0, 8.47562, 0 )
-far = 1500.0
+[node name="CameraHolder" type="Spatial" parent="SystemOrigin"]
+transform = Transform( 0.733006, 0, -0.680222, 0, 1, 0, 0.680222, 0, 0.733006, 0, 0, 0 )
 script = ExtResource( 3 )
+
+[node name="CameraHolder2" type="Spatial" parent="SystemOrigin/CameraHolder"]
+
+[node name="Camera" type="Camera" parent="SystemOrigin/CameraHolder/CameraHolder2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 12.0009 )
+far = 1500.0
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
 mesh = SubResource( 1 )
@@ -303,3 +365,11 @@ material/0 = null
 [connection signal="popup_hide" from="ControlDialog" to="ControlDialog" method="_on_ControlDialog_popup_hide"]
 [connection signal="value_changed" from="ControlDialog/VBoxContainer/TimeSlider" to="." method="_on_TimeSlider_value_changed"]
 [connection signal="pressed" from="ControlDialog/VBoxContainer/AddBodyButton" to="ControlDialog" method="_on_Button_pressed"]
+[connection signal="text_entered" from="ControlDialog/VBoxContainer/VSplit/BodyStats/HName/Name" to="." method="_on_Name_text_entered"]
+[connection signal="text_entered" from="ControlDialog/VBoxContainer/VSplit/BodyStats/HEccentricity/Eccentricity" to="." method="_on_Eccentricity_text_entered"]
+[connection signal="text_entered" from="ControlDialog/VBoxContainer/VSplit/BodyStats/HSMA/SemiMajorAxis" to="." method="_on_SemiMajorAxis_text_entered"]
+[connection signal="text_entered" from="ControlDialog/VBoxContainer/VSplit/BodyStats/HPeriod/Period" to="." method="_on_Period_text_entered"]
+[connection signal="text_entered" from="ControlDialog/VBoxContainer/VSplit/BodyStats/HLoan/Loan" to="." method="_on_Loan_text_entered"]
+[connection signal="text_entered" from="ControlDialog/VBoxContainer/VSplit/BodyStats/HRadius/Radius" to="." method="_on_Radius_text_entered"]
+[connection signal="color_changed" from="ControlDialog/VBoxContainer/VSplit/BodyStats/HColor/ColorPickerButton" to="." method="_on_ColorPickerButton_color_changed"]
+[connection signal="text_entered" from="ControlDialog/VBoxContainer/VSplit/BodyStats/HMass/Mass" to="." method="_on_Mass_text_entered"]

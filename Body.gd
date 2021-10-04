@@ -6,24 +6,23 @@ class_name Body, "Body.svg"
 export(float) var Mass: float = 5.9e12  setget SetMass# #In kgs Mass of the Body
 #export var MassScale = 1e12  #Mass*MassScale = actual Mass
 
-export(float) var Radius: float = 1000 #In KM, the radius of the body
+export(float) var Radius: float = 1000 setget SetRadius #In KM, the radius of the body
 
-export(bool) var IsStar = false 
-export(float) var Period = 1
-export(Color, RGBA) var Col 
+export(bool) var IsStar = false setget SetStar
+export(float) var Period = 1 setget SetPeriod
+export(Color, RGBA) var Col  setget SetCol
 
-export var SemiMajorAxis: float = 10 
-export(float,0,1) var eccentricity: float = .0
-export var loan: float = 0.0  #longitude of ascending node
+export var SemiMajorAxis: float = 10 setget SetSMA
+export(float,0,1) var eccentricity: float = .0 setget SetE
+export var loan: float = 0.0 setget SetLOAN  #longitude of ascending node 
 export var offsettAng = 0.0
 export var ShowOrbit = true 
 export var Static = true #if true, is a planet, if false, can be influenced and enter other spheres of influence
  
-export var focus = false setget SetFocus
 onready var Controller = get_tree().root.get_node("Spatial")
 
 const DistanceScale = 0.001 #KM to scene units
-const OUTERSOI = 1_000_000 #the size for an unconstrained? soi 
+const OUTERSOI = 10_000_000 #the size for an unconstrained? soi 
 
 onready var Parent= null #get_parent()
 var IsOuter = false
@@ -135,6 +134,9 @@ func GenerateSOIMesh():
 	SOIRep.mesh=SphereMesh.new()
 	SOIRep.mesh.material = SpatialMaterial.new()
 	SOIRep.mesh.material.flags_transparent=true
+	SOIRep.mesh.material.albedo_color.r=.8
+	SOIRep.mesh.material.albedo_color.g=.8
+	SOIRep.mesh.material.albedo_color.b=1
 
 	SOIRep.mesh.material.albedo_color.a=.1
 	SetSOIMesh()
@@ -147,7 +149,6 @@ func SetSOIMesh():
 		r = CalcSOI()
 	else:
 		r=OUTERSOI
-	#print_debug(r,"ds",DistanceScale)
 	SOIRep.mesh.radius=r*DistanceScale
 	SOIRep.mesh.height=2*SOIRep.mesh.radius
 
@@ -174,8 +175,6 @@ func _process(_delta):
 	else:
 		RelativePos=AtPos(Controller.Time)
 		
-	#RelativePos.x=cos(time*Period)*SemiMajorAxis
-	#RelativePos.z=sin(time*Period)*SemiMajorAxis
 	
 	if not Parent==null:
 		global_transform.origin=Parent.global_transform.origin+RelativePos
@@ -190,6 +189,8 @@ func GenerateMesh():
 
 	
 func SetMesh():
+	if mesh==null:
+		GenerateMesh()
 	mesh.radius=Radius*DistanceScale
 	mesh.height=2*mesh.radius
 	
@@ -227,20 +228,19 @@ func SetMaterial():
 	mesh.material.albedo_color=Col
 
 
-func SetFocus(nf):
-	focus=nf
-	mesh.material.flags_no_depth_test=focus
-	mesh.material.flags_unshaded=focus
+
 func SetMass(nm):
 	Mass=nm#*MassScale
-	if Parent!=null:
-		SetSOIMesh()
+	print(name," sets SOI Parent", Parent)
+	SetSOIMesh()
+		
+func SetRadius(nr):
+	Radius=nr
+	SetMesh()
 	
 func SetSMA(n):
 	SemiMajorAxis=n
-
-	if Parent!=null:
-		SetSOIMesh()
+	SetSOIMesh()
 	var G: float = 6.67e-11
 	if Parent!=null:
 		var u = Parent.Mass*G
@@ -248,6 +248,8 @@ func SetSMA(n):
 	MakeOrbitRep()
 
 func SetPeriod(np):
+	if np==0:
+		np=1
 	Period=np
 	var G: float = 6.67e-11
 	if Parent!=null:
