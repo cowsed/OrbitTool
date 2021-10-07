@@ -1,12 +1,12 @@
 extends Spatial
 
 #Todo: 
-#Serialize Systems. im getting tired of typing
-#Figure out where the sysstem disagrees with reality, probably mass or distance scale?
+#Serialize Systems. im getting tired of typing - halfway done
+#--- Figure out where the sysstem disagrees with reality, probably mass or distance scale? -- doesnt really, just keep your ratios of masses correct
 #Get the speeds right so it goes faster at periapsis
 # billboard type things for AN, Peri, and Apo
-#Notify all to recalculate when affecting change is made by other body
-#Figure out why on entering the seen, a 2nd body gets SOI correct but when changed mid run, it gets the default error SOI
+#--- Notify all to recalculate when affecting change is made by other body ---
+#--- Figure out why on entering the seen, a 2nd body gets SOI correct but when changed mid run, it gets the default error SOI---
 #---More humane time warp  - kinda--- - is now exponential
 #Add UI Safeguards
 # if no or nonsense values are entered, stop that
