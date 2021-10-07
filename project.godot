@@ -42,7 +42,7 @@ window/vsync/use_vsync=false
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/CADLikeOrbit_Camera/plugin.cfg", "res://addons/orbit_camera/plugin.cfg" )
+enabled=PoolStringArray(  )
 
 [global]
 

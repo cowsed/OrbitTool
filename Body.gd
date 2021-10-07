@@ -15,7 +15,7 @@ export(Color, RGBA) var Col  setget SetCol
 export var SemiMajorAxis: float = 10 setget SetSMA
 export(float,0,1) var eccentricity: float = .0 setget SetE
 export var loan: float = 0.0 setget SetLOAN  #longitude of ascending node 
-export var offsettAng = 0.0
+export var offsetTime = 0.0
 export var ShowOrbit = true 
 export var Static = true #if true, is a planet, if false, can be influenced and enter other spheres of influence
  
@@ -23,9 +23,10 @@ onready var Controller = get_tree().root.get_node("Spatial")
 
 const DistanceScale = 0.001 #KM to scene units
 const OUTERSOI = 10_000_000 #the size for an unconstrained? soi 
+const G: float = 6.67e-11
 
 onready var Parent= null #get_parent()
-var IsOuter = false
+
 
 func is_type(type): return type == "Body" or .is_type(type)
 func    get_type(): return "Body"
@@ -37,6 +38,28 @@ var Clicker = Area.new()
 var ClickerSphere = CollisionShape.new()
 
 signal SelfSelected(s)
+signal SelfUpdated(s)
+
+func Jsonify():
+	var res: String ="{"
+	res+='"name":"'+name+'",'
+	res+='"mass":'+str(Mass)+','
+	res+='"semimajoraxis":'+str(SemiMajorAxis)+','
+	res+='"eccentricity":'+str(eccentricity)+','
+	res+='"loan":'+str(loan)+','
+	res+='"offsetTime":'+str(offsetTime)+','
+	res+='"children": ['
+	var cCount=0
+	for c in get_children():
+		if c.get_class()=="Body":
+			res+=c.Jsonify()
+			res+=","
+			cCount+=1
+	if cCount>0:
+		res=res.substr(0,res.length()-1)
+	res+=']'
+	res+="}"
+	return res
 
 func _ready():
 	OrbitRep.set_name(name+"-OrbitRepresentation")
@@ -52,25 +75,46 @@ func _ready():
 	Clicker.connect("input_event", self, "wasClicked")
 	
 	self.connect("SelfSelected", Controller,"BodySelected")
-	print(Controller)
+	self.connect("SelfUpdated", Controller,"BodyUpdated")
+
+func _process(_delta):		
+		
+	if Parent==null:
+		Parent=get_parent()
+	if SOIRep.mesh==null:
+		GenerateSOIMesh()
+
+	var RelativePos
+	if Controller==null:
+		RelativePos=AtPos(0)
+	else:
+		RelativePos=AtPos(Controller.Time)
+		
+	
+	if not Parent==null:
+		global_transform.origin=Parent.global_transform.origin+RelativePos
+
 
 func wasClicked(_camera, event, _click_position, _click_normal, _shape_idx):
 	if event is InputEventMouseButton:
 		if event.button_index == BUTTON_LEFT:
 			emit_signal("SelfSelected",self)
-			
-	
 
+func UpdateSelf():
+	SetSOIMesh()
+	#Parent could have changed so recalculate period
+	if Parent!=null&&Parent.get_class()=="Body":
+		var u = Parent.Mass*G
+		Period = 2*PI * sqrt(pow(SemiMajorAxis,3)/u)
+	MakeOrbitRep()
+	SetSOIMesh()
+
+	
 func CalcVelocityAt(r: float):
 
 	var parentMass = 0
 	if Parent.get_class() == "Body":
 		parentMass=Parent.Mass
-	#print("ParentMass",parentMass)
-	#print("A",SemiMajorAxis)
-	var G: float = 6.67e-11
-	#print("G-%.15f"%G)
-	#print("r",r)
 	var a = SemiMajorAxis
 
 	if r==0 or a==0:
@@ -82,10 +126,13 @@ func calcB():
 	var a = SemiMajorAxis
 	return a*sqrt(1-pow(e,2))
 func AtPos(t: float):
+	if SemiMajorAxis==0 or Period==0:
+		return Vector3()
+	
 	var a=SemiMajorAxis
 	#var b=calcB()
 	var e = eccentricity
-	var v = t/Period+offsettAng
+	var v = t/Period+offsetTime
 	var p#: Vector3 = Vector3(cos(v)*a,0,sin(v)*b)
 	var r = (a* (1-pow(e,2))  /  (1+e*cos(v)))
 	p=Vector3(cos(v)*r, 0, sin(v)*r)
@@ -104,7 +151,7 @@ func MakeOrbitRep():
 	var res=.01;
 	var t=0
 	while t<2*PI:
-		var p = AtPos(t*Period+offsettAng)
+		var p = AtPos(t*Period+offsetTime)
 		#add p to line
 		OrbitRep.AddPoint(p)
 		t+=res
@@ -115,69 +162,40 @@ func MakeOrbitRep():
 
 
 func CalcSOI():
-	if Parent==null:
-		print("ow",name)
+	if Parent==null || Parent.get_class()!="Body":
+		print("No parent found, must be largest body",name)
 		return OUTERSOI
 		
-	if !IsOuter:
-		print("is Body")
+	else:
 		var parentMass: float=Parent.Mass
-		print(Mass,"/",parentMass,"=",Mass/parentMass)
 		#var parentMassScale = get_parent().MassScale
 		print_debug("SOI=",SemiMajorAxis*pow(Mass/parentMass, 2.0/5.0)/DistanceScale)
 		return SemiMajorAxis*pow(Mass/parentMass, 2.0/5.0)/DistanceScale
-	else:
-		print("IS NOT BODY",Parent, "-", IsOuter,"-", name)
-		return OUTERSOI #100 thousand KM
+
 
 func GenerateSOIMesh():
 	SOIRep.mesh=SphereMesh.new()
 	SOIRep.mesh.material = SpatialMaterial.new()
 	SOIRep.mesh.material.flags_transparent=true
+	SOIRep.mesh.material.flags_unshaded=true
+
 	SOIRep.mesh.material.albedo_color.r=.8
 	SOIRep.mesh.material.albedo_color.g=.8
-	SOIRep.mesh.material.albedo_color.b=1
+	SOIRep.mesh.material.albedo_color.b=.8
 
-	SOIRep.mesh.material.albedo_color.a=.1
+	SOIRep.mesh.material.albedo_color.a=.006
 	SetSOIMesh()
 	
 func SetSOIMesh():
 	if SOIRep.mesh==null:
 		SOIRep.mesh=SphereMesh.new()
 	var r: float
-	if !IsOuter:
-		r = CalcSOI()
-	else:
-		r=OUTERSOI
+	r=CalcSOI()
 	SOIRep.mesh.radius=r*DistanceScale
 	SOIRep.mesh.height=2*SOIRep.mesh.radius
 
 
 		
-func _process(_delta):
-	#if Controller==null:
-		
-		
-	if Parent==null:
-		print_debug("Problematic")
-		Parent=get_parent()
-		print_debug(Parent.get_class())
-		if Parent.get_class()!="MeshInstance":
-			IsOuter=true
-		else:
-			IsOuter=false
-	if SOIRep.mesh==null:
-		GenerateSOIMesh()
-
-	var RelativePos
-	if Controller==null:
-		RelativePos=AtPos(0)
-	else:
-		RelativePos=AtPos(Controller.Time)
-		
-	
-	if not Parent==null:
-		global_transform.origin=Parent.global_transform.origin+RelativePos
 	
 	
 func GenerateMesh():
@@ -195,7 +213,6 @@ func SetMesh():
 	mesh.height=2*mesh.radius
 	
 	if ClickerSphere.shape!=null:
-		print(ClickerSphere.shape)
 		ClickerSphere.shape.radius = mesh.radius
 
 
@@ -230,39 +247,47 @@ func SetMaterial():
 
 
 func SetMass(nm):
+	if nm==0:
+		nm=1	
+	print("SOI: ",CalcSOI())
 	Mass=nm#*MassScale
 	print(name," sets SOI Parent", Parent)
+	print("SOI: ",CalcSOI())
+	
 	SetSOIMesh()
+	emit_signal("SelfUpdated",self)
 		
 func SetRadius(nr):
 	Radius=nr
 	SetMesh()
-	
+	emit_signal("SelfUpdated",self)
 func SetSMA(n):
 	SemiMajorAxis=n
 	SetSOIMesh()
-	var G: float = 6.67e-11
 	if Parent!=null:
 		var u = Parent.Mass*G
 		Period = 2*PI * sqrt(pow(SemiMajorAxis,3)/u)
 	MakeOrbitRep()
+	emit_signal("SelfUpdated",self)
 
 func SetPeriod(np):
 	if np==0:
 		np=1
 	Period=np
-	var G: float = 6.67e-11
 	if Parent!=null:
 		var M = Parent.Mass
 		SemiMajorAxis = (pow((G*M*pow(Period,2.0))/(4*PI*PI),1.0/3.0))
 	MakeOrbitRep()
+	emit_signal("SelfUpdated",self)
 	
 func SetE(newE):
 	eccentricity=newE
 	MakeOrbitRep()
+	emit_signal("SelfUpdated",self)
 func SetLOAN(nl):
 	loan=nl
 	MakeOrbitRep()
+	emit_signal("SelfUpdated",self)
 
 func SetOrbitVis(b):
 	ShowOrbit=b

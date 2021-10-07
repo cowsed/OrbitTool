@@ -7,8 +7,9 @@ extends Spatial
 # billboard type things for AN, Peri, and Apo
 #Notify all to recalculate when affecting change is made by other body
 #Figure out why on entering the seen, a 2nd body gets SOI correct but when changed mid run, it gets the default error SOI
-#More humane time warp  - kinda
-
+#---More humane time warp  - kinda--- - is now exponential
+#Add UI Safeguards
+# if no or nonsense values are entered, stop that
 #Completed
 #---Sets and gets on BodyStats---
 #---Smooth Camera transitions---
@@ -45,13 +46,17 @@ func FindBodyIndex(b):
 			return bi
 	return -1 
 
+func BodyUpdated(_ub):
+	for b in Bodies:
+		b.UpdateSelf()
+
 func BodySelected(b):
-	print(b.name)
+	print("Body ",b.name, " Selected")
 	var bi=FindBodyIndex(b)
 	if bi!=-1:
 		Active=bi
 		TreeTracker[bi].select(0)
-	#Cam.SetFocus(Bodies[Active])  #Dont set focus again here or else lerp is broken, this is because Tree.select triggers the other selection function which sets old target ot what is now the new targe
+	Cam.SetFocus(Bodies[Active])
 	SetBodyStats()
 
 func TreeNodeSelected():
@@ -72,10 +77,10 @@ func AddBody(bname = "Body", a = 10, e = 0, br = 1000, bm=1000,  bcol = Color8(2
 		 nb.Parent = null
 	
 	nb.name=bname
-	nb.Radius=br
-	nb.Mass=bm
+	nb.SetRadius(br)
+	nb.SetMass(bm)
 	nb.SetSMA(a)
-	nb.eccentricity=e
+	nb.SetE(e)
 	nb.Col=bcol
 	
 	nb.MakeOrbitRep()
@@ -101,6 +106,7 @@ func SetBodyStats():
 	Stats.get_node("HRadius/Radius").text = str(b.Radius)
 	Stats.get_node("HPeriod/Period").text = str(b.Period)
 	Stats.get_node("HColor/ColorPickerButton").color=b.Col
+	Stats.get_node("HSOI/SOI").text=str(b.CalcSOI())
 	
 func ClearBodyStats():
 	var Stats = UI.get_node("VBoxContainer/VSplit/BodyStats")
@@ -111,6 +117,7 @@ func ClearBodyStats():
 	Stats.get_node("HRadius/Radius").text = ""
 	Stats.get_node("HPeriod/Period").text = ""
 	Stats.get_node("HColor/ColorPickerButton").color=Color8(0,0,0,255)
+	Stats.get_node("HSOI/SOI").text=""
 
 
 func makeTree(body, tree_root, tree):
@@ -132,7 +139,6 @@ func MakeTree():
 
 	root.set_text(0,"Root")
 	makeTree(SysOrig, root, tree)
-	print(TreeTracker)
 
 
 func _on_TimeSlider_value_changed(value):
@@ -185,3 +191,35 @@ func _on_ColorPickerButton_color_changed(color):
 
 func _on_Loan_text_entered(new_text):
 	Bodies[Active].SetLOAN(float(new_text))
+
+
+func _on_LoadSystemButton_pressed():
+	$LoadDialogue.popup()
+	print_debug("Load System from file")
+
+func _on_SaveSystemButton_pressed():
+	$SaveDialogue.popup()
+	print_debug("Save System to file")
+	
+
+
+func _on_LoadDialogue_file_selected(path):
+	print("selected ",path)
+
+
+
+func _on_SaveDialogue_file_selected(path):
+	print("save to ",path)
+	var res="["
+	for c in $SystemOrigin.get_children():
+		if c.get_class()=="Body":
+			res+=c.Jsonify()
+			res+=","
+	
+	res=res.substr(0,res.length()-1) #Hacky way to remove trailing comma
+	res+="]"
+	print(res)
+	var file = File.new()
+	file.open(path, File.WRITE)
+	file.store_string(res)
+	file.close()
