@@ -171,7 +171,8 @@ func CalcSOI():
 	else:
 		var parentMass: float=Parent.Mass
 		#var parentMassScale = get_parent().MassScale
-		return SemiMajorAxis*DistanceScale*pow(Mass/parentMass, 2.0/5.0) #Todo remove this? or no cuz its dividing by that so what the hell
+		print_debug("m/M ",Mass/parentMass)
+		return SemiMajorAxis*pow(Mass/parentMass, 2.0/5.0) #Todo remove this? or no cuz its dividing by that so what the hell
 
 
 func GenerateSOIMesh():
