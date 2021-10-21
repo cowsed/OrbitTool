@@ -3,8 +3,7 @@ extends MeshInstance
 class_name Body, "Body.svg"
 
 
-export(float) var Mass: float = 5.9e12  setget SetMass# #In kgs Mass of the Body
-#export var MassScale = 1e12  #Mass*MassScale = actual Mass
+export(float) var Mass: float = 5.9e24  setget SetMass# #In kgs Mass of the Body
 
 export(float) var Radius: float = 1000 setget SetRadius #In KM, the radius of the body
 
@@ -22,7 +21,8 @@ export var Static = true #if true, is a planet, if false, can be influenced and 
 onready var Controller = get_tree().root.get_node("Spatial")
 
 const DistanceScale = 0.001 #KM to scene units
-const OUTERSOI = 10_000_000 #the size for an unconstrained? soi 
+const SecsPerDay = 24*60*60
+const OUTERSOI = 100_000_000 #the size for an unconstrained? soi 
 const G: float = 6.67e-11
 
 onready var Parent= null #get_parent()
@@ -76,6 +76,8 @@ func _ready():
 	
 	self.connect("SelfSelected", Controller,"BodySelected")
 	self.connect("SelfUpdated", Controller,"BodyUpdated")
+	
+
 
 func _process(_delta):		
 		
@@ -101,11 +103,12 @@ func wasClicked(_camera, event, _click_position, _click_normal, _shape_idx):
 			emit_signal("SelfSelected",self)
 
 func UpdateSelf():
+	print_debug("updating self")
 	SetSOIMesh()
 	#Parent could have changed so recalculate period
 	if Parent!=null&&Parent.get_class()=="Body":
 		var u = Parent.Mass*G
-		Period = 2*PI * sqrt(pow(SemiMajorAxis,3)/u)
+		Period = 2*PI * sqrt(pow(SemiMajorAxis*1000,3)/u)
 	MakeOrbitRep()
 	SetSOIMesh()
 
@@ -129,7 +132,7 @@ func AtPos(t: float):
 	if SemiMajorAxis==0 or Period==0:
 		return Vector3()
 	
-	var a=SemiMajorAxis
+	var a=SemiMajorAxis*DistanceScale
 	#var b=calcB()
 	var e = eccentricity
 	var v = t/Period+offsetTime
@@ -163,14 +166,12 @@ func MakeOrbitRep():
 
 func CalcSOI():
 	if Parent==null || Parent.get_class()!="Body":
-		print("No parent found, must be largest body",name)
 		return OUTERSOI
 		
 	else:
 		var parentMass: float=Parent.Mass
 		#var parentMassScale = get_parent().MassScale
-		print_debug("SOI=",SemiMajorAxis*pow(Mass/parentMass, 2.0/5.0)/DistanceScale)
-		return SemiMajorAxis*pow(Mass/parentMass, 2.0/5.0)/DistanceScale
+		return SemiMajorAxis*DistanceScale*pow(Mass/parentMass, 2.0/5.0) #Todo remove this? or no cuz its dividing by that so what the hell
 
 
 func GenerateSOIMesh():
@@ -191,6 +192,7 @@ func SetSOIMesh():
 		SOIRep.mesh=SphereMesh.new()
 	var r: float
 	r=CalcSOI()
+	print_debug("Rad",r)
 	SOIRep.mesh.radius=r*DistanceScale
 	SOIRep.mesh.height=2*SOIRep.mesh.radius
 
@@ -250,7 +252,7 @@ func SetMass(nm):
 	if nm==0:
 		nm=1	
 	print("SOI: ",CalcSOI())
-	Mass=nm#*MassScale
+	Mass=nm*1.0e24#*MassScale
 	print(name," sets SOI Parent", Parent)
 	print("SOI: ",CalcSOI())
 	
@@ -264,9 +266,9 @@ func SetRadius(nr):
 func SetSMA(n):
 	SemiMajorAxis=n
 	SetSOIMesh()
-	if Parent!=null:
+	if Parent!=null && Parent.get_class()=="Body":
 		var u = Parent.Mass*G
-		Period = 2*PI * sqrt(pow(SemiMajorAxis,3)/u)
+		Period = 2*PI * sqrt(pow(SemiMajorAxis*1000,3)/u) #Convert SMA to meters
 	MakeOrbitRep()
 	emit_signal("SelfUpdated",self)
 
@@ -274,9 +276,10 @@ func SetPeriod(np):
 	if np==0:
 		np=1
 	Period=np
-	if Parent!=null:
-		var M = Parent.Mass
-		SemiMajorAxis = (pow((G*M*pow(Period,2.0))/(4*PI*PI),1.0/3.0))
+	print(name,"sets period w/ parent", get_parent())
+	if Parent!=null && Parent.get_class()=="Body":
+		var u = Parent.Mass*G
+		SemiMajorAxis = (pow((u*pow(Period,2.0))/(4*PI*PI),1.0/3.0)) / 1000.0
 	MakeOrbitRep()
 	emit_signal("SelfUpdated",self)
 	

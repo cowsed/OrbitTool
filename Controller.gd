@@ -1,8 +1,11 @@
 extends Spatial
 
 #Todo: 
+#Convery all the textboxes to SpinBoxes
 #Serialize Systems. im getting tired of typing - halfway done
 #--- Figure out where the sysstem disagrees with reality, probably mass or distance scale? -- doesnt really, just keep your ratios of masses correct
+# This is false, period calculation gets messed up because planets have very large masses
+# also straighten out what the actual units are, it is confusing 
 #Get the speeds right so it goes faster at periapsis
 # billboard type things for AN, Peri, and Apo
 #--- Notify all to recalculate when affecting change is made by other body ---
@@ -46,9 +49,10 @@ func FindBodyIndex(b):
 			return bi
 	return -1 
 
-func BodyUpdated(_ub):
+func BodyUpdated(ub):
 	for b in Bodies:
-		b.UpdateSelf()
+		if b!=ub:
+			b.UpdateSelf()
 
 func BodySelected(b):
 	print("Body ",b.name, " Selected")
@@ -99,17 +103,20 @@ func AddBody(bname = "Body", a = 10, e = 0, br = 1000, bm=1000,  bcol = Color8(2
 func SetBodyStats():
 	var b: Body = Bodies[Active]
 	var Stats = UI.get_node("VBoxContainer/VSplit/BodyStats")
+	Stats.show()
 	Stats.get_node("HName/Name").text = b.name
-	Stats.get_node("HSMA/SemiMajorAxis").text = str(b.SemiMajorAxis)
-	Stats.get_node("HEccentricity/Eccentricity").text = str(b.eccentricity)
-	Stats.get_node("HMass/Mass").text = str(b.Mass)
-	Stats.get_node("HRadius/Radius").text = str(b.Radius)
-	Stats.get_node("HPeriod/Period").text = str(b.Period)
+	Stats.get_node("HSMA/SMA").value = b.SemiMajorAxis
+	Stats.get_node("HEccentricity/Eccentricity").value = b.eccentricity
+	Stats.get_node("HMass/Mass").value = b.Mass/(1e24)
+	Stats.get_node("HRadius/Radius").value = b.Radius
+	Stats.get_node("HPeriod/Period").value = b.Period
 	Stats.get_node("HColor/ColorPickerButton").color=b.Col
-	Stats.get_node("HSOI/SOI").text=str(b.CalcSOI())
+	Stats.get_node("HSOI/SOI").value = b.CalcSOI()
 	
 func ClearBodyStats():
+	
 	var Stats = UI.get_node("VBoxContainer/VSplit/BodyStats")
+	Stats.hide()
 	Stats.get_node("HName/Name").text = ""
 	Stats.get_node("HSMA/SemiMajorAxis").text = ""
 	Stats.get_node("HEccentricity/Eccentricity").text = ""
@@ -162,35 +169,44 @@ func _on_TimeSlider_value_changed(value):
 # should be near one month
 func _on_Name_text_entered(new_text):
 	Bodies[Active].name=new_text
+	MakeTree()
 	SetBodyStats()
 
-func _on_SemiMajorAxis_text_entered(new_text):
-	Bodies[Active].SetSMA(float(new_text))
+func _on_Period_value_changed(value):
+	Bodies[Active].SetPeriod(value)
 	SetBodyStats()
 
 
-func _on_Eccentricity_text_entered(new_text):
-	Bodies[Active].SetE(float(new_text))
+func _on_SMA_value_changed(value):
+	print_debug("SMASet",value)
+	Bodies[Active].SetSMA(value)
 	SetBodyStats()
 
-func _on_Radius_text_entered(new_text):
-	Bodies[Active].SetRadius(float(new_text))
+
+func _on_Ecc_value_changed(value):
+	Bodies[Active].SetE(value)
 	SetBodyStats()
 
-func _on_Mass_text_entered(new_text):
-	Bodies[Active].SetMass(float(new_text))
+
+func _on_Radius_value_changed(value):
+	Bodies[Active].SetRadius(value)
 	SetBodyStats()
 
-func _on_Period_text_entered(new_text):
-	Bodies[Active].SetPeriod(float(new_text))
+
+func _on_Mass_value_changed(value):
+	Bodies[Active].SetMass(value)
+	SetBodyStats()
+
+
+func _on_Loan_value_changed(value):
+	Bodies[Active].SetLOAN(value)
 	SetBodyStats()
 
 func _on_ColorPickerButton_color_changed(color):
 	Bodies[Active].SetCol(color)
 
 
-func _on_Loan_text_entered(new_text):
-	Bodies[Active].SetLOAN(float(new_text))
+
 
 
 func _on_LoadSystemButton_pressed():
@@ -204,9 +220,35 @@ func _on_SaveSystemButton_pressed():
 
 
 func _on_LoadDialogue_file_selected(path):
-	print("selected ",path)
+	var file = File.new()
+	file.open(path, File.READ)
+	var content = file.get_as_text()
+	file.close()
+	var res: JSONParseResult = JSON.parse(content)
+	if res.error!=OK:
+		print("Error Loading, From old version?")
+	DecodeFile(res.result)
 
+func DecodeFile(result):
+	if typeof(result) == TYPE_ARRAY:
+		print("Good", len(result))
+		for bRep in result:
+			print(bRep, typeof(bRep)==TYPE_DICTIONARY)
+			AddBodyFromDict(bRep)
+	
+func AddBodyFromDict(d):
+	var ecc=float(d["eccentricity"])
+	var sma = float(d["semimajoraxis"])
+	var mass = float(d["mass"])
+	var loan = float(d["loan"])
+	var name = d["name"]
+	var rad = 100
+	var col: Color
+	AddBody(name, sma, ecc, rad, mass, col)
 
+	
+	var kids=d["children"]
+	print("kids, ", kids)
 
 func _on_SaveDialogue_file_selected(path):
 	print("save to ",path)
@@ -223,3 +265,10 @@ func _on_SaveDialogue_file_selected(path):
 	file.open(path, File.WRITE)
 	file.store_string(res)
 	file.close()
+
+
+func _on_SOI_value_changed(value):
+	print_debug("Not Implemented")
+	pass # Replace with function body.
+
+

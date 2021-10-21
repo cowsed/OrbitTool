@@ -1,1 +1,1 @@
-[{"name":"Earth","mass":81,"semimajoraxis":0,"eccentricity":0,"loan":0,"offsetTime":0,"children": [{"name":"Moon","mass":1,"semimajoraxis":384.4,"eccentricity":0.05,"loan":0,"offsetTime":0,"children": []}]}]
+[{"name":"Earth","mass":5980000000000000511705088,"semimajoraxis":0,"eccentricity":0,"loan":0,"offsetTime":0,"children": [{"name":"Moon","mass":72999999999999997902848,"semimajoraxis":384400.000044,"eccentricity":0.05,"loan":0,"offsetTime":0,"children": []}]}]
