@@ -88,9 +88,10 @@ func _process(_delta):
 
 	var RelativePos
 	if Controller==null:
-		RelativePos=AtPos(0)
+		RelativePos=AtPos2(0)
 	else:
 		RelativePos=AtPos(Controller.Time)
+		RelativePos=AtPos2(Controller.Time)
 		
 	
 	if not Parent==null:
@@ -124,11 +125,11 @@ func CalcVelocityAt(r: float):
 		return 0
 
 	return sqrt(G*parentMass*((2/r)-(1/a)))
-func calcB():
+func calcB()-> float:
 	var e = eccentricity
 	var a = SemiMajorAxis
 	return a*sqrt(1-pow(e,2))
-func AtPos(t: float):
+func AtPos(t: float)-> Vector3:
 	if SemiMajorAxis==0 or Period==0:
 		return Vector3()
 	
@@ -143,8 +144,30 @@ func AtPos(t: float):
 	#p=p.rotate_z(loan)
 	p=p.rotated(Vector3(0,1,0),loan)
 	#p+=translation
-
 	return p
+
+func AtPos2(t: float)-> Vector3:
+	if SemiMajorAxis==0 or Period==0 or Parent==null:
+		return Vector3()
+
+	var e = eccentricity
+	var mu: float = G*Parent.Mass
+	
+	var Mt: float = t*sqrt(mu/pow(SemiMajorAxis*1000,3))
+	var Et: float=SolveKeplersEquation(Mt, eccentricity)
+	var Vt = 2*atan2(sqrt(1+e)*sin(Et/2), sqrt(1-e)*cos(Et/2))
+	var r_c = SemiMajorAxis*(1-e*cos(Et))
+	var o = r_c*DistanceScale*Vector3(cos(Vt), 0, sin(Vt))
+	o=o.rotated(Vector3(0,1,0),loan)
+	return o
+
+func SolveKeplersEquation(M: float, e: float):
+	var E: float = M
+	var En: float
+	for i in range(10):
+		En = E-((E-e*sin(E)-M)/(1-e*cos(E)))
+		E=En
+	return E
 
 func MakeOrbitRep():
 	if OrbitRep==null:

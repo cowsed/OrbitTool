@@ -28,7 +28,6 @@ __meta__ = {
 }
 
 [node name="SaveDialogue" type="FileDialog" parent="."]
-visible = true
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -397,7 +396,7 @@ margin_left = 49.0
 margin_right = 198.0
 margin_bottom = 24.0
 max_value = 1e+08
-step = 0.001
+step = 0.0
 suffix = "x10^24 kg"
 
 [node name="HSOI" type="HSplitContainer" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
@@ -455,6 +454,18 @@ script = ExtResource( 3 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 12.0009 )
 near = 0.01
 far = 15000.0
+
+[node name="WindowDialog" type="WindowDialog" parent="."]
+visible = true
+anchor_bottom = 1.0
+margin_right = 180.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="WindowDialog"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [connection signal="dir_selected" from="LoadDialogue" to="." method="_on_LoadDialogue_dir_selected"]
 [connection signal="file_selected" from="LoadDialogue" to="." method="_on_LoadDialogue_file_selected"]

@@ -268,7 +268,7 @@ func _on_SaveDialogue_file_selected(path):
 
 
 func _on_SOI_value_changed(value):
-	print_debug("Not Implemented")
+	#print_debug("Not Implemented")
 	pass # Replace with function body.
 
 
