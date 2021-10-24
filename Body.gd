@@ -43,11 +43,14 @@ signal SelfUpdated(s)
 func Jsonify():
 	var res: String ="{"
 	res+='"name":"'+name+'",'
-	res+='"mass":'+str(Mass)+','
+	res+='"mass":'+str(Mass/(1e24))+','
 	res+='"semimajoraxis":'+str(SemiMajorAxis)+','
 	res+='"eccentricity":'+str(eccentricity)+','
 	res+='"loan":'+str(loan)+','
 	res+='"offsetTime":'+str(offsetTime)+','
+	res+='"radius":'+str(Radius)+','
+	res+='"color":"'+str(Col.to_html())+'",'
+	
 	res+='"children": ['
 	var cCount=0
 	for c in get_children():
@@ -140,14 +143,11 @@ func AtPos(t: float)-> Vector3:
 	var p#: Vector3 = Vector3(cos(v)*a,0,sin(v)*b)
 	var r = (a* (1-pow(e,2))  /  (1+e*cos(v)))
 	p=Vector3(cos(v)*r, 0, sin(v)*r)
-	#p-=translation
-	#p=p.rotate_z(loan)
 	p=p.rotated(Vector3(0,1,0),loan)
-	#p+=translation
 	return p
 
 func AtPos2(t: float)-> Vector3:
-	if SemiMajorAxis==0 or Period==0 or Parent==null:
+	if SemiMajorAxis==0 or Period==0 or Parent==null or Parent.get_class()!="Body":
 		return Vector3()
 
 	var e = eccentricity
@@ -194,7 +194,6 @@ func CalcSOI():
 	else:
 		var parentMass: float=Parent.Mass
 		#var parentMassScale = get_parent().MassScale
-		print_debug("m/M ",Mass/parentMass)
 		return SemiMajorAxis*pow(Mass/parentMass, 2.0/5.0) #Todo remove this? or no cuz its dividing by that so what the hell
 
 
@@ -216,7 +215,6 @@ func SetSOIMesh():
 		SOIRep.mesh=SphereMesh.new()
 	var r: float
 	r=CalcSOI()
-	print_debug("Rad",r)
 	SOIRep.mesh.radius=r*DistanceScale
 	SOIRep.mesh.height=2*SOIRep.mesh.radius
 

@@ -72,14 +72,19 @@ func TreeNodeSelected():
 	SetBodyStats()
 	
 	
-func AddBody(bname = "Body", a = 10, e = 0, br = 1000, bm=1000,  bcol = Color8(255,0,0,255)):	
+func AddBody(bname = "Body", a = 10, e = 0, br = 1000, bm=1, bParent = null, bcol = Color8(255,0,0,255))->Body:	
 	var nb: Body = Body.new()
 	nb.Controller=self
-	if Active>-1:
-		nb.Parent = Bodies[Active]
-	else:
-		 nb.Parent = null
 	
+	if bParent==null:
+		print_debug("Very Not Good")
+		if Active>-1:
+			nb.Parent = Bodies[Active]
+		else:
+			 nb.Parent = null
+	else:
+		print_debug("Very Good")
+		nb.Parent = bParent
 	nb.name=bname
 	nb.SetRadius(br)
 	nb.SetMass(bm)
@@ -91,15 +96,17 @@ func AddBody(bname = "Body", a = 10, e = 0, br = 1000, bm=1000,  bcol = Color8(2
 	nb.GenerateMesh()
 	nb.GenerateSOIMesh()
 	
-	
-	if len(Bodies)>0 and Active>-1:
-		Bodies[Active].add_child(nb)
+	if nb.Parent!=null:
+		nb.Parent.add_child(nb)
 	else:
-		SysOrig.add_child(nb)
+		if len(Bodies)>0 and Active>-1:
+			Bodies[Active].add_child(nb)
+		else:
+			SysOrig.add_child(nb)
 	Bodies.append(nb)
 	
 	MakeTree()
-
+	return nb
 func SetBodyStats():
 	var b: Body = Bodies[Active]
 	var Stats = UI.get_node("VBoxContainer/VSplit/BodyStats")
@@ -236,20 +243,26 @@ func DecodeFile(result):
 			print(bRep, typeof(bRep)==TYPE_DICTIONARY)
 			AddBodyFromDict(bRep)
 	
-func AddBodyFromDict(d):
+func AddBodyFromDict(d, par=null) -> Body:
 	var ecc=float(d["eccentricity"])
 	var sma = float(d["semimajoraxis"])
+	print_debug("Loaded Mass = ",float(d["mass"]))
 	var mass = float(d["mass"])
 	var loan = float(d["loan"])
-	var name = d["name"]
-	var rad = 100
-	var col: Color
-	AddBody(name, sma, ecc, rad, mass, col)
-
+	var new_name = d["name"]
+	var rad = d["radius"]
+	var col_rep = d["color"]
+	var col: Color = Color(col_rep)
+	var me = AddBody(new_name, sma, ecc, rad, mass, par, col)
+	print_debug("In Node Mass = ",me.Mass)
+	
 	
 	var kids=d["children"]
-	print("kids, ", kids)
-
+	if typeof(kids) == TYPE_ARRAY:
+		for bRep in kids:
+			print(bRep, typeof(bRep)==TYPE_DICTIONARY)
+			AddBodyFromDict(bRep, me)
+	return me
 func _on_SaveDialogue_file_selected(path):
 	print("save to ",path)
 	var res="["

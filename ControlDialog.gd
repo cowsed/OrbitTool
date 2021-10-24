@@ -31,7 +31,8 @@ func _on_AddBody_ConfirmButton_pressed():
 		a,
 		e,
 		r,
-		m, 
+		m,
+		null, 
 		c
 		)
 	Adder.hide()

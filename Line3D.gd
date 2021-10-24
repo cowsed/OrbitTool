@@ -19,5 +19,6 @@ func MakeMesh():
 	
 	for p in Points:
 		add_vertex(p+Center)
+	add_vertex(Points[0]+Center)
 	
 	end()
