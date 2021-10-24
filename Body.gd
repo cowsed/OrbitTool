@@ -163,7 +163,6 @@ func VelAt(t: float)-> Vector3:
 	
 	var Mt: float = t*sqrt(mu/pow(a,3))
 	var Et: float=SolveKeplersEquation(Mt, eccentricity)
-	var Vt = 2*atan2(sqrt(1+e)*sin(Et/2), sqrt(1-e)*cos(Et/2))
 	var r_c = a*(1-e*cos(Et))
 	var ov: Vector3
 	var rate = sqrt(mu*a)/r_c
@@ -180,14 +179,13 @@ func HeightAt(t: float)-> float:
 	
 	var Mt: float = t*sqrt(mu/pow(a,3))
 	var Et: float=SolveKeplersEquation(Mt, eccentricity)
-	var Vt = 2*atan2(sqrt(1+e)*sin(Et/2), sqrt(1-e)*cos(Et/2))
 	var r_c = a*(1-e*cos(Et))
 	return r_c
 
 func SolveKeplersEquation(M: float, e: float):
 	var E: float = M
 	var En: float
-	for i in range(10):
+	for _i in range(10):
 		En = E-((E-e*sin(E)-M)/(1-e*cos(E)))
 		E=En
 	return E

@@ -228,16 +228,7 @@ func _on_SaveSystemButton_pressed():
 	print_debug("Save System to file")
 	
 
-
-func _on_LoadDialogue_file_selected(path):
-	var file = File.new()
-	file.open(path, File.READ)
-	var content = file.get_as_text()
-	file.close()
-	var res: JSONParseResult = JSON.parse(content)
-	if res.error!=OK:
-		print("Error Loading, From old version?")
-		return
+func ClearSystem():
 	Cam.Focus=null
 	InfoUI.ViewBody=null
 	
@@ -249,6 +240,17 @@ func _on_LoadDialogue_file_selected(path):
 			c.queue_free()
 	Active=-1
 	
+func _on_LoadDialogue_file_selected(path):
+	var file = File.new()
+	file.open(path, File.READ)
+	var content = file.get_as_text()
+	file.close()
+	var res: JSONParseResult = JSON.parse(content)
+	if res.error!=OK:
+		print("Error Loading, From old version?")
+		return
+	
+	ClearSystem()
 	#Decode New System
 	DecodeFile(res.result)
 
@@ -301,3 +303,7 @@ func _on_SOI_value_changed(value):
 	pass # Replace with function body.
 
 
+
+
+func _on_Clear_pressed():
+	ClearSystem()

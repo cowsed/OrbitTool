@@ -10,15 +10,21 @@ func _ready():
 
 
 
-func _on_Button_pressed():
+
+
+
+
+
+
+func _on_AddBodyButton_pressed():
 	Adder.popup_centered(Vector2(get_viewport().size.x/2.0,0))
 
 
-func _on_AddBody_CancelButton_pressed():
+func _on_CancelButton_pressed():
 	Adder.hide()
 
 
-func _on_AddBody_ConfirmButton_pressed():
+func _on_ConfirmButton_pressed():
 	var Name = Adder.get_node("ParameterHolder/BodyName").text
 	var a = float(Adder.get_node("ParameterHolder/SemiMajorAxis").text)
 	var e = float(Adder.get_node("ParameterHolder/Eccentricity").text)

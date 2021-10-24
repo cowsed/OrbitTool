@@ -201,11 +201,12 @@ __meta__ = {
 }
 
 [node name="Stats" type="VBoxContainer" parent="InfoDialog/TabContainer"]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_right = -8.0
-margin_bottom = -36.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
 size_flags_horizontal = 3
 __meta__ = {
 "_edit_use_anchors_": false
@@ -295,10 +296,10 @@ text = "Height: "
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 826.0
-margin_top = 296.0
-margin_right = 818.0
-margin_bottom = 260.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
 size_flags_vertical = 3
 
 [node name="HName" type="HSplitContainer" parent="InfoDialog/TabContainer/Controls"]
@@ -549,7 +550,7 @@ text = "Add Body"
 [node name="VSplit" type="PanelContainer" parent="ControlDialog/VBoxContainer"]
 margin_top = 62.0
 margin_right = 199.0
-margin_bottom = 572.0
+margin_bottom = 548.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -557,7 +558,7 @@ size_flags_vertical = 3
 margin_left = 7.0
 margin_top = 7.0
 margin_right = 192.0
-margin_bottom = 503.0
+margin_bottom = 479.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_colors/relationship_line_color = Color( 1, 1, 1, 1 )
@@ -565,9 +566,9 @@ custom_constants/draw_guides = 0
 custom_constants/draw_relationship_lines = 1
 
 [node name="FileButtons" type="HSplitContainer" parent="ControlDialog/VBoxContainer"]
-margin_top = 576.0
+margin_top = 552.0
 margin_right = 199.0
-margin_bottom = 596.0
+margin_bottom = 572.0
 size_flags_horizontal = 3
 __meta__ = {
 "_edit_use_anchors_": false
@@ -586,9 +587,17 @@ margin_bottom = 20.0
 size_flags_horizontal = 3
 text = "Save"
 
+[node name="Clear" type="Button" parent="ControlDialog/VBoxContainer"]
+margin_top = 576.0
+margin_right = 199.0
+margin_bottom = 596.0
+text = "Clear System"
+
 [connection signal="dir_selected" from="LoadDialogue" to="." method="_on_LoadDialogue_dir_selected"]
 [connection signal="file_selected" from="LoadDialogue" to="." method="_on_LoadDialogue_file_selected"]
 [connection signal="file_selected" from="SaveDialogue" to="." method="_on_SaveDialogue_file_selected"]
+[connection signal="pressed" from="AdderDialogue/ConfirmDeny/CancelButton" to="ControlDialog" method="_on_CancelButton_pressed"]
+[connection signal="pressed" from="AdderDialogue/ConfirmDeny/ConfirmButton" to="ControlDialog" method="_on_ConfirmButton_pressed"]
 [connection signal="text_entered" from="InfoDialog/TabContainer/Controls/HName/Name" to="." method="_on_Name_text_entered"]
 [connection signal="value_changed" from="InfoDialog/TabContainer/Controls/HEccentricity/Eccentricity" to="." method="_on_Ecc_value_changed"]
 [connection signal="value_changed" from="InfoDialog/TabContainer/Controls/HSMA/SMA" to="." method="_on_SMA_value_changed"]
@@ -600,5 +609,7 @@ text = "Save"
 [connection signal="value_changed" from="InfoDialog/TabContainer/Controls/HSOI/SOI" to="." method="_on_SOI_value_changed"]
 [connection signal="pressed" from="InfoDialog/ShowHide" to="InfoDialog" method="_on_ShowHide_pressed"]
 [connection signal="value_changed" from="ControlDialog/VBoxContainer/TimeSlider" to="." method="_on_TimeSlider_value_changed"]
+[connection signal="pressed" from="ControlDialog/VBoxContainer/AddBodyButton" to="ControlDialog" method="_on_AddBodyButton_pressed"]
 [connection signal="pressed" from="ControlDialog/VBoxContainer/FileButtons/LoadButton" to="." method="_on_LoadSystemButton_pressed"]
 [connection signal="pressed" from="ControlDialog/VBoxContainer/FileButtons/SaveButton" to="." method="_on_SaveSystemButton_pressed"]
+[connection signal="pressed" from="ControlDialog/VBoxContainer/Clear" to="." method="_on_Clear_pressed"]
