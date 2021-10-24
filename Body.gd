@@ -21,7 +21,7 @@ export var Static = true #if true, is a planet, if false, can be influenced and 
 onready var Controller = get_tree().root.get_node("Spatial")
 
 const DistanceScale = 0.001 #KM to scene units
-const SecsPerDay = 24*60*60
+const SecsPerDay = 24*60*60 #AKA a julian day
 const OUTERSOI = 100_000_000 #the size for an unconstrained? soi 
 const G: float = 6.67e-11
 
@@ -39,6 +39,8 @@ var ClickerSphere = CollisionShape.new()
 
 signal SelfSelected(s)
 signal SelfUpdated(s)
+
+
 
 func Jsonify():
 	var res: String ="{"
@@ -100,14 +102,13 @@ func _process(_delta):
 	if not Parent==null:
 		global_transform.origin=Parent.global_transform.origin+RelativePos
 
-
 func wasClicked(_camera, event, _click_position, _click_normal, _shape_idx):
 	if event is InputEventMouseButton:
 		if event.button_index == BUTTON_LEFT:
 			emit_signal("SelfSelected",self)
 
 func UpdateSelf():
-	print_debug("updating self")
+	print_debug("updating self and am ", name)
 	SetSOIMesh()
 	#Parent could have changed so recalculate period
 	if Parent!=null&&Parent.get_class()=="Body":
@@ -117,17 +118,7 @@ func UpdateSelf():
 	SetSOIMesh()
 
 	
-func CalcVelocityAt(r: float):
 
-	var parentMass = 0
-	if Parent.get_class() == "Body":
-		parentMass=Parent.Mass
-	var a = SemiMajorAxis
-
-	if r==0 or a==0:
-		return 0
-
-	return sqrt(G*parentMass*((2/r)-(1/a)))
 func calcB()-> float:
 	var e = eccentricity
 	var a = SemiMajorAxis
@@ -150,16 +141,48 @@ func AtPos2(t: float)-> Vector3:
 	if SemiMajorAxis==0 or Period==0 or Parent==null or Parent.get_class()!="Body":
 		return Vector3()
 
+	var a = SemiMajorAxis*1000 # get sma to m
 	var e = eccentricity
 	var mu: float = G*Parent.Mass
 	
-	var Mt: float = t*sqrt(mu/pow(SemiMajorAxis*1000,3))
+	var Mt: float = t*sqrt(mu/pow(a,3))
 	var Et: float=SolveKeplersEquation(Mt, eccentricity)
 	var Vt = 2*atan2(sqrt(1+e)*sin(Et/2), sqrt(1-e)*cos(Et/2))
-	var r_c = SemiMajorAxis*(1-e*cos(Et))
-	var o = r_c*DistanceScale*Vector3(cos(Vt), 0, sin(Vt))
+	var r_c = a*(1-e*cos(Et))
+	var o = r_c*DistanceScale*DistanceScale*Vector3(cos(Vt), 0, sin(Vt))
 	o=o.rotated(Vector3(0,1,0),loan)
 	return o
+
+func VelAt(t: float)-> Vector3:
+	if SemiMajorAxis==0 or Period==0 or Parent==null or Parent.get_class()!="Body":
+		return Vector3()
+
+	var a = SemiMajorAxis*1000 # get sma to m
+	var e = eccentricity
+	var mu: float = G*Parent.Mass
+	
+	var Mt: float = t*sqrt(mu/pow(a,3))
+	var Et: float=SolveKeplersEquation(Mt, eccentricity)
+	var Vt = 2*atan2(sqrt(1+e)*sin(Et/2), sqrt(1-e)*cos(Et/2))
+	var r_c = a*(1-e*cos(Et))
+	var ov: Vector3
+	var rate = sqrt(mu*a)/r_c
+	ov = rate * Vector3(-sin(Et), 0 , sqrt(1-e*e)*cos(Et))
+	return ov
+
+func HeightAt(t: float)-> float:
+	if SemiMajorAxis==0 or Period==0 or Parent==null or Parent.get_class()!="Body":
+		return 0.0
+
+	var a = SemiMajorAxis*1000 # get sma to m
+	var e = eccentricity
+	var mu: float = G*Parent.Mass
+	
+	var Mt: float = t*sqrt(mu/pow(a,3))
+	var Et: float=SolveKeplersEquation(Mt, eccentricity)
+	var Vt = 2*atan2(sqrt(1+e)*sin(Et/2), sqrt(1-e)*cos(Et/2))
+	var r_c = a*(1-e*cos(Et))
+	return r_c
 
 func SolveKeplersEquation(M: float, e: float):
 	var E: float = M
@@ -273,11 +296,7 @@ func SetMaterial():
 func SetMass(nm):
 	if nm==0:
 		nm=1	
-	print("SOI: ",CalcSOI())
-	Mass=nm*1.0e24#*MassScale
-	print(name," sets SOI Parent", Parent)
-	print("SOI: ",CalcSOI())
-	
+	Mass=nm*1.0e24#*MassScale	
 	SetSOIMesh()
 	emit_signal("SelfUpdated",self)
 		

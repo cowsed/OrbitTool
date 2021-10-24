@@ -10,7 +10,6 @@ func AddPoint(v: Vector3):
 
 func ClearOrbit():
 	Points.resize(0)
-	pass
 
 func MakeMesh():
 	

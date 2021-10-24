@@ -1,8 +1,11 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Controller.gd" type="Script" id=1]
 [ext_resource path="res://ControlDialog.gd" type="Script" id=2]
 [ext_resource path="res://CameraHolder.gd" type="Script" id=3]
+[ext_resource path="res://InfoDialog.gd" type="Script" id=4]
+
+[sub_resource type="ImageTexture" id=1]
 
 [node name="Spatial" type="Spatial"]
 script = ExtResource( 1 )
@@ -164,284 +167,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Confirm"
 
-[node name="ControlDialog" type="WindowDialog" parent="."]
-visible = true
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 826.0
-margin_top = 27.0
-window_title = "Settings"
-resizable = true
-script = ExtResource( 2 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="VBoxContainer" type="VBoxContainer" parent="ControlDialog"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="TimeWarpLabel" type="Label" parent="ControlDialog/VBoxContainer"]
-margin_right = 198.0
-margin_bottom = 14.0
-text = "Time Scale: 1"
-
-[node name="TimeSlider" type="HSlider" parent="ControlDialog/VBoxContainer"]
-margin_top = 18.0
-margin_right = 198.0
-margin_bottom = 34.0
-max_value = 1e+08
-step = 0.001
-value = 1.0
-exp_edit = true
-__meta__ = {
-"_editor_description_": " "
-}
-
-[node name="AddBodyButton" type="Button" parent="ControlDialog/VBoxContainer"]
-margin_top = 38.0
-margin_right = 198.0
-margin_bottom = 58.0
-text = "Add Body"
-
-[node name="VSplit" type="VSplitContainer" parent="ControlDialog/VBoxContainer"]
-margin_top = 62.0
-margin_right = 198.0
-margin_bottom = 549.0
-size_flags_vertical = 3
-
-[node name="Tree" type="Tree" parent="ControlDialog/VBoxContainer/VSplit"]
-margin_right = 198.0
-margin_bottom = 195.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_colors/relationship_line_color = Color( 1, 1, 1, 1 )
-custom_constants/draw_guides = 0
-custom_constants/draw_relationship_lines = 1
-
-[node name="BodyStats" type="VBoxContainer" parent="ControlDialog/VBoxContainer/VSplit"]
-margin_top = 207.0
-margin_right = 198.0
-margin_bottom = 487.0
-size_flags_vertical = 3
-
-[node name="HName" type="HSplitContainer" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
-margin_right = 198.0
-margin_bottom = 24.0
-
-[node name="NameLabel" type="Label" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HName"]
-margin_top = 5.0
-margin_right = 42.0
-margin_bottom = 19.0
-text = "Name:"
-
-[node name="Name" type="LineEdit" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HName"]
-margin_left = 54.0
-margin_right = 198.0
-margin_bottom = 24.0
-
-[node name="OrbitStatsLabel" type="Label" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
-margin_top = 28.0
-margin_right = 198.0
-margin_bottom = 42.0
-text = "Orbit Properties:"
-
-[node name="HEccentricity" type="HSplitContainer" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
-margin_top = 46.0
-margin_right = 198.0
-margin_bottom = 70.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="EccLabel" type="Label" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HEccentricity"]
-margin_top = 5.0
-margin_right = 25.0
-margin_bottom = 19.0
-text = "Ecc:"
-
-[node name="Eccentricity" type="SpinBox" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HEccentricity"]
-margin_left = 37.0
-margin_right = 198.0
-margin_bottom = 24.0
-max_value = 1.0
-step = 0.001
-
-[node name="HSMA" type="HSplitContainer" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
-margin_top = 74.0
-margin_right = 198.0
-margin_bottom = 98.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="SMALabel" type="Label" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HSMA"]
-margin_top = 5.0
-margin_right = 32.0
-margin_bottom = 19.0
-text = "SMA:"
-
-[node name="SMA" type="SpinBox" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HSMA"]
-margin_left = 44.0
-margin_right = 198.0
-margin_bottom = 24.0
-max_value = 1e+15
-step = 0.001
-suffix = "km"
-
-[node name="HPeriod" type="HSplitContainer" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
-margin_top = 102.0
-margin_right = 198.0
-margin_bottom = 126.0
-
-[node name="PeriodLabel" type="Label" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HPeriod"]
-margin_top = 5.0
-margin_right = 45.0
-margin_bottom = 19.0
-text = "Period:"
-
-[node name="Period" type="SpinBox" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HPeriod"]
-margin_left = 57.0
-margin_right = 198.0
-margin_bottom = 24.0
-min_value = 0.001
-max_value = 9.22337e+18
-step = 0.001
-value = 0.001
-exp_edit = true
-suffix = "s"
-
-[node name="HLoan" type="HSplitContainer" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
-margin_top = 130.0
-margin_right = 198.0
-margin_bottom = 154.0
-
-[node name="LoanLabel" type="Label" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HLoan"]
-margin_top = 5.0
-margin_right = 30.0
-margin_bottom = 19.0
-text = "Loan"
-
-[node name="Loan" type="SpinBox" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HLoan"]
-margin_left = 42.0
-margin_right = 198.0
-margin_bottom = 24.0
-max_value = 360.0
-suffix = "°"
-
-[node name="BodyPropertiesLabel" type="Label" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
-margin_top = 158.0
-margin_right = 198.0
-margin_bottom = 172.0
-text = "Body Properties:"
-
-[node name="HRadius" type="HSplitContainer" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
-margin_top = 176.0
-margin_right = 198.0
-margin_bottom = 200.0
-
-[node name="RadiusLabel" type="Label" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HRadius"]
-margin_top = 5.0
-margin_right = 42.0
-margin_bottom = 19.0
-text = "Radius"
-
-[node name="Radius" type="SpinBox" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HRadius"]
-margin_left = 54.0
-margin_right = 198.0
-margin_bottom = 24.0
-min_value = 1.0
-max_value = 1e+06
-value = 1.0
-exp_edit = true
-suffix = "km"
-
-[node name="HColor" type="HSplitContainer" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
-margin_top = 204.0
-margin_right = 198.0
-margin_bottom = 224.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="ColorLabel" type="Label" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HColor"]
-margin_top = 3.0
-margin_right = 73.0
-margin_bottom = 17.0
-text = "Body Color:"
-
-[node name="ColorPickerButton" type="ColorPickerButton" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HColor"]
-margin_left = 85.0
-margin_right = 198.0
-margin_bottom = 20.0
-
-[node name="HMass" type="HSplitContainer" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
-margin_top = 228.0
-margin_right = 198.0
-margin_bottom = 252.0
-
-[node name="MassLabel" type="Label" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HMass"]
-margin_top = 5.0
-margin_right = 37.0
-margin_bottom = 19.0
-text = "Mass:"
-
-[node name="Mass" type="SpinBox" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HMass"]
-margin_left = 49.0
-margin_right = 198.0
-margin_bottom = 24.0
-max_value = 1e+08
-step = 0.0
-suffix = "x10^24 kg"
-
-[node name="HSOI" type="HSplitContainer" parent="ControlDialog/VBoxContainer/VSplit/BodyStats"]
-margin_top = 256.0
-margin_right = 198.0
-margin_bottom = 280.0
-
-[node name="SOILabel" type="Label" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HSOI"]
-margin_top = 5.0
-margin_right = 27.0
-margin_bottom = 19.0
-text = "SOI:"
-
-[node name="SOI" type="SpinBox" parent="ControlDialog/VBoxContainer/VSplit/BodyStats/HSOI"]
-margin_left = 39.0
-margin_right = 198.0
-margin_bottom = 24.0
-min_value = 0.001
-max_value = 1e+11
-value = 0.001
-exp_edit = true
-suffix = " km"
-
-[node name="FileButtons" type="HSplitContainer" parent="ControlDialog/VBoxContainer"]
-margin_top = 553.0
-margin_right = 198.0
-margin_bottom = 573.0
-size_flags_horizontal = 3
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="LoadButton" type="Button" parent="ControlDialog/VBoxContainer/FileButtons"]
-margin_right = 93.0
-margin_bottom = 20.0
-size_flags_horizontal = 3
-text = "Load"
-
-[node name="SaveButton" type="Button" parent="ControlDialog/VBoxContainer/FileButtons"]
-margin_left = 105.0
-margin_right = 198.0
-margin_bottom = 20.0
-size_flags_horizontal = 3
-text = "Save"
-
 [node name="SystemOrigin" type="Spatial" parent="."]
 
 [node name="CameraHolder" type="Spatial" parent="SystemOrigin"]
@@ -455,34 +180,425 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 12.0009 )
 near = 0.01
 far = 15000.0
 
-[node name="WindowDialog" type="WindowDialog" parent="."]
-visible = true
+[node name="InfoDialog" type="Panel" parent="."]
 anchor_bottom = 1.0
-margin_right = 180.0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="WindowDialog"]
-anchor_right = 1.0
-anchor_bottom = 1.0
+margin_right = 175.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="TabContainer" type="TabContainer" parent="InfoDialog"]
+anchor_bottom = 1.0
+margin_right = 179.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+tab_align = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Stats" type="VBoxContainer" parent="InfoDialog/TabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -8.0
+margin_bottom = -36.0
+size_flags_horizontal = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NameLabel" type="Label" parent="InfoDialog/TabContainer/Stats"]
+margin_right = 171.0
+margin_bottom = 14.0
+
+[node name="Clarification" type="Label" parent="InfoDialog/TabContainer/Stats"]
+margin_top = 18.0
+margin_right = 171.0
+margin_bottom = 32.0
+text = "(Relative to Parent)"
+
+[node name="HSeparator2" type="HSeparator" parent="InfoDialog/TabContainer/Stats"]
+margin_top = 36.0
+margin_right = 171.0
+margin_bottom = 40.0
+
+[node name="Velocity" type="VBoxContainer" parent="InfoDialog/TabContainer/Stats"]
+margin_top = 44.0
+margin_right = 171.0
+margin_bottom = 142.0
+
+[node name="VelLabel" type="Label" parent="InfoDialog/TabContainer/Stats/Velocity"]
+margin_right = 171.0
+margin_bottom = 14.0
+text = "Velocity:"
+
+[node name="x" type="SpinBox" parent="InfoDialog/TabContainer/Stats/Velocity"]
+margin_top = 18.0
+margin_right = 171.0
+margin_bottom = 42.0
+custom_icons/updown = SubResource( 1 )
+min_value = -1e+15
+max_value = 1e+15
+step = 0.001
+prefix = "x"
+suffix = "km/s"
+
+[node name="y" type="SpinBox" parent="InfoDialog/TabContainer/Stats/Velocity"]
+margin_top = 46.0
+margin_right = 171.0
+margin_bottom = 70.0
+custom_icons/updown = SubResource( 1 )
+min_value = -1e+15
+max_value = 1e+15
+step = 0.001
+prefix = "y"
+suffix = "km/s"
+
+[node name="z" type="SpinBox" parent="InfoDialog/TabContainer/Stats/Velocity"]
+margin_top = 74.0
+margin_right = 171.0
+margin_bottom = 98.0
+custom_icons/updown = SubResource( 1 )
+min_value = -1e+15
+max_value = 1e+15
+step = 0.001
+prefix = "z"
+suffix = "km/s"
+
+[node name="HSeparator3" type="HSeparator" parent="InfoDialog/TabContainer/Stats"]
+margin_top = 146.0
+margin_right = 171.0
+margin_bottom = 150.0
+
+[node name="SpeedLabel" type="Label" parent="InfoDialog/TabContainer/Stats"]
+margin_top = 154.0
+margin_right = 171.0
+margin_bottom = 168.0
+text = "Speed: "
+
+[node name="HSeparator" type="HSeparator" parent="InfoDialog/TabContainer/Stats"]
+margin_top = 172.0
+margin_right = 171.0
+margin_bottom = 176.0
+
+[node name="HeightLabel" type="Label" parent="InfoDialog/TabContainer/Stats"]
+margin_top = 180.0
+margin_right = 171.0
+margin_bottom = 194.0
+text = "Height: "
+
+[node name="Controls" type="VBoxContainer" parent="InfoDialog/TabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 826.0
+margin_top = 296.0
+margin_right = 818.0
+margin_bottom = 260.0
+size_flags_vertical = 3
+
+[node name="HName" type="HSplitContainer" parent="InfoDialog/TabContainer/Controls"]
+margin_right = 171.0
+margin_bottom = 24.0
+
+[node name="NameLabel" type="Label" parent="InfoDialog/TabContainer/Controls/HName"]
+margin_top = 5.0
+margin_right = 42.0
+margin_bottom = 19.0
+text = "Name:"
+
+[node name="Name" type="LineEdit" parent="InfoDialog/TabContainer/Controls/HName"]
+margin_left = 54.0
+margin_right = 171.0
+margin_bottom = 24.0
+
+[node name="OrbitStatsLabel" type="Label" parent="InfoDialog/TabContainer/Controls"]
+margin_top = 28.0
+margin_right = 171.0
+margin_bottom = 42.0
+text = "Orbit Properties:"
+
+[node name="HEccentricity" type="HSplitContainer" parent="InfoDialog/TabContainer/Controls"]
+margin_top = 46.0
+margin_right = 171.0
+margin_bottom = 70.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EccLabel" type="Label" parent="InfoDialog/TabContainer/Controls/HEccentricity"]
+margin_top = 5.0
+margin_right = 25.0
+margin_bottom = 19.0
+text = "Ecc:"
+
+[node name="Eccentricity" type="SpinBox" parent="InfoDialog/TabContainer/Controls/HEccentricity"]
+margin_left = 37.0
+margin_right = 171.0
+margin_bottom = 24.0
+max_value = 1.0
+step = 0.001
+
+[node name="HSMA" type="HSplitContainer" parent="InfoDialog/TabContainer/Controls"]
+margin_top = 74.0
+margin_right = 171.0
+margin_bottom = 98.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SMALabel" type="Label" parent="InfoDialog/TabContainer/Controls/HSMA"]
+margin_top = 5.0
+margin_right = 32.0
+margin_bottom = 19.0
+text = "SMA:"
+
+[node name="SMA" type="SpinBox" parent="InfoDialog/TabContainer/Controls/HSMA"]
+margin_left = 44.0
+margin_right = 171.0
+margin_bottom = 24.0
+max_value = 1e+15
+step = 0.001
+suffix = "km"
+
+[node name="HPeriod" type="HSplitContainer" parent="InfoDialog/TabContainer/Controls"]
+margin_top = 102.0
+margin_right = 171.0
+margin_bottom = 126.0
+
+[node name="PeriodLabel" type="Label" parent="InfoDialog/TabContainer/Controls/HPeriod"]
+margin_top = 5.0
+margin_right = 45.0
+margin_bottom = 19.0
+text = "Period:"
+
+[node name="Period" type="SpinBox" parent="InfoDialog/TabContainer/Controls/HPeriod"]
+margin_left = 57.0
+margin_right = 171.0
+margin_bottom = 24.0
+min_value = 0.001
+max_value = 9.22337e+18
+step = 0.001
+value = 0.001
+exp_edit = true
+suffix = "s"
+
+[node name="HLoan" type="HSplitContainer" parent="InfoDialog/TabContainer/Controls"]
+margin_top = 130.0
+margin_right = 171.0
+margin_bottom = 154.0
+
+[node name="LoanLabel" type="Label" parent="InfoDialog/TabContainer/Controls/HLoan"]
+margin_top = 5.0
+margin_right = 30.0
+margin_bottom = 19.0
+text = "Loan"
+
+[node name="Loan" type="SpinBox" parent="InfoDialog/TabContainer/Controls/HLoan"]
+margin_left = 42.0
+margin_right = 171.0
+margin_bottom = 24.0
+max_value = 360.0
+suffix = "°"
+
+[node name="BodyPropertiesLabel" type="Label" parent="InfoDialog/TabContainer/Controls"]
+margin_top = 158.0
+margin_right = 171.0
+margin_bottom = 172.0
+text = "Body Properties:"
+
+[node name="HRadius" type="HSplitContainer" parent="InfoDialog/TabContainer/Controls"]
+margin_top = 176.0
+margin_right = 171.0
+margin_bottom = 200.0
+
+[node name="RadiusLabel" type="Label" parent="InfoDialog/TabContainer/Controls/HRadius"]
+margin_top = 5.0
+margin_right = 42.0
+margin_bottom = 19.0
+text = "Radius"
+
+[node name="Radius" type="SpinBox" parent="InfoDialog/TabContainer/Controls/HRadius"]
+margin_left = 54.0
+margin_right = 171.0
+margin_bottom = 24.0
+min_value = 1.0
+max_value = 1e+06
+value = 1.0
+exp_edit = true
+suffix = "km"
+
+[node name="HColor" type="HSplitContainer" parent="InfoDialog/TabContainer/Controls"]
+margin_top = 204.0
+margin_right = 171.0
+margin_bottom = 224.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorLabel" type="Label" parent="InfoDialog/TabContainer/Controls/HColor"]
+margin_top = 3.0
+margin_right = 73.0
+margin_bottom = 17.0
+text = "Body Color:"
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="InfoDialog/TabContainer/Controls/HColor"]
+margin_left = 85.0
+margin_right = 171.0
+margin_bottom = 20.0
+
+[node name="HMass" type="HSplitContainer" parent="InfoDialog/TabContainer/Controls"]
+margin_top = 228.0
+margin_right = 171.0
+margin_bottom = 252.0
+
+[node name="MassLabel" type="Label" parent="InfoDialog/TabContainer/Controls/HMass"]
+margin_top = 5.0
+margin_right = 37.0
+margin_bottom = 19.0
+text = "Mass:"
+
+[node name="Mass" type="SpinBox" parent="InfoDialog/TabContainer/Controls/HMass"]
+margin_left = 49.0
+margin_right = 171.0
+margin_bottom = 24.0
+max_value = 1e+08
+step = 0.0
+suffix = "x10^24 kg"
+
+[node name="HSOI" type="HSplitContainer" parent="InfoDialog/TabContainer/Controls"]
+margin_top = 256.0
+margin_right = 171.0
+margin_bottom = 280.0
+
+[node name="SOILabel" type="Label" parent="InfoDialog/TabContainer/Controls/HSOI"]
+margin_top = 5.0
+margin_right = 27.0
+margin_bottom = 19.0
+text = "SOI:"
+
+[node name="SOI" type="SpinBox" parent="InfoDialog/TabContainer/Controls/HSOI"]
+margin_left = 39.0
+margin_right = 171.0
+margin_bottom = 24.0
+min_value = 0.001
+max_value = 1e+11
+value = 0.001
+exp_edit = true
+suffix = " km"
+
+[node name="ShowHide" type="Button" parent="InfoDialog"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -20.0
+margin_right = 175.0
+text = "Hide Stats"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ControlDialog" type="Panel" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -199.0
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ControlDialog"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 1.0
+margin_top = 4.0
+margin_right = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TimeWarpLabel" type="Label" parent="ControlDialog/VBoxContainer"]
+margin_right = 199.0
+margin_bottom = 14.0
+text = "Time Scale: 1"
+
+[node name="TimeSlider" type="HSlider" parent="ControlDialog/VBoxContainer"]
+margin_top = 18.0
+margin_right = 199.0
+margin_bottom = 34.0
+max_value = 1e+08
+step = 0.001
+value = 1.0
+exp_edit = true
+__meta__ = {
+"_editor_description_": " "
+}
+
+[node name="AddBodyButton" type="Button" parent="ControlDialog/VBoxContainer"]
+margin_top = 38.0
+margin_right = 199.0
+margin_bottom = 58.0
+text = "Add Body"
+
+[node name="VSplit" type="PanelContainer" parent="ControlDialog/VBoxContainer"]
+margin_top = 62.0
+margin_right = 199.0
+margin_bottom = 572.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Tree" type="Tree" parent="ControlDialog/VBoxContainer/VSplit"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 192.0
+margin_bottom = 503.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_colors/relationship_line_color = Color( 1, 1, 1, 1 )
+custom_constants/draw_guides = 0
+custom_constants/draw_relationship_lines = 1
+
+[node name="FileButtons" type="HSplitContainer" parent="ControlDialog/VBoxContainer"]
+margin_top = 576.0
+margin_right = 199.0
+margin_bottom = 596.0
+size_flags_horizontal = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LoadButton" type="Button" parent="ControlDialog/VBoxContainer/FileButtons"]
+margin_right = 93.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Load"
+
+[node name="SaveButton" type="Button" parent="ControlDialog/VBoxContainer/FileButtons"]
+margin_left = 105.0
+margin_right = 199.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Save"
+
 [connection signal="dir_selected" from="LoadDialogue" to="." method="_on_LoadDialogue_dir_selected"]
 [connection signal="file_selected" from="LoadDialogue" to="." method="_on_LoadDialogue_file_selected"]
 [connection signal="file_selected" from="SaveDialogue" to="." method="_on_SaveDialogue_file_selected"]
-[connection signal="pressed" from="AdderDialogue/ConfirmDeny/CancelButton" to="ControlDialog" method="_on_AddBody_CancelButton_pressed"]
-[connection signal="pressed" from="AdderDialogue/ConfirmDeny/ConfirmButton" to="ControlDialog" method="_on_AddBody_ConfirmButton_pressed"]
-[connection signal="popup_hide" from="ControlDialog" to="ControlDialog" method="_on_ControlDialog_popup_hide"]
+[connection signal="text_entered" from="InfoDialog/TabContainer/Controls/HName/Name" to="." method="_on_Name_text_entered"]
+[connection signal="value_changed" from="InfoDialog/TabContainer/Controls/HEccentricity/Eccentricity" to="." method="_on_Ecc_value_changed"]
+[connection signal="value_changed" from="InfoDialog/TabContainer/Controls/HSMA/SMA" to="." method="_on_SMA_value_changed"]
+[connection signal="value_changed" from="InfoDialog/TabContainer/Controls/HPeriod/Period" to="." method="_on_Period_value_changed"]
+[connection signal="value_changed" from="InfoDialog/TabContainer/Controls/HLoan/Loan" to="." method="_on_Loan_value_changed"]
+[connection signal="value_changed" from="InfoDialog/TabContainer/Controls/HRadius/Radius" to="." method="_on_Radius_value_changed"]
+[connection signal="color_changed" from="InfoDialog/TabContainer/Controls/HColor/ColorPickerButton" to="." method="_on_ColorPickerButton_color_changed"]
+[connection signal="value_changed" from="InfoDialog/TabContainer/Controls/HMass/Mass" to="." method="_on_Mass_value_changed"]
+[connection signal="value_changed" from="InfoDialog/TabContainer/Controls/HSOI/SOI" to="." method="_on_SOI_value_changed"]
+[connection signal="pressed" from="InfoDialog/ShowHide" to="InfoDialog" method="_on_ShowHide_pressed"]
 [connection signal="value_changed" from="ControlDialog/VBoxContainer/TimeSlider" to="." method="_on_TimeSlider_value_changed"]
-[connection signal="pressed" from="ControlDialog/VBoxContainer/AddBodyButton" to="ControlDialog" method="_on_Button_pressed"]
-[connection signal="text_entered" from="ControlDialog/VBoxContainer/VSplit/BodyStats/HName/Name" to="." method="_on_Name_text_entered"]
-[connection signal="value_changed" from="ControlDialog/VBoxContainer/VSplit/BodyStats/HEccentricity/Eccentricity" to="." method="_on_Ecc_value_changed"]
-[connection signal="value_changed" from="ControlDialog/VBoxContainer/VSplit/BodyStats/HSMA/SMA" to="." method="_on_SMA_value_changed"]
-[connection signal="value_changed" from="ControlDialog/VBoxContainer/VSplit/BodyStats/HPeriod/Period" to="." method="_on_Period_value_changed"]
-[connection signal="value_changed" from="ControlDialog/VBoxContainer/VSplit/BodyStats/HLoan/Loan" to="." method="_on_Loan_value_changed"]
-[connection signal="value_changed" from="ControlDialog/VBoxContainer/VSplit/BodyStats/HRadius/Radius" to="." method="_on_Radius_value_changed"]
-[connection signal="color_changed" from="ControlDialog/VBoxContainer/VSplit/BodyStats/HColor/ColorPickerButton" to="." method="_on_ColorPickerButton_color_changed"]
-[connection signal="value_changed" from="ControlDialog/VBoxContainer/VSplit/BodyStats/HMass/Mass" to="." method="_on_Mass_value_changed"]
-[connection signal="value_changed" from="ControlDialog/VBoxContainer/VSplit/BodyStats/HSOI/SOI" to="." method="_on_SOI_value_changed"]
 [connection signal="pressed" from="ControlDialog/VBoxContainer/FileButtons/LoadButton" to="." method="_on_LoadSystemButton_pressed"]
 [connection signal="pressed" from="ControlDialog/VBoxContainer/FileButtons/SaveButton" to="." method="_on_SaveSystemButton_pressed"]

@@ -1,4 +1,4 @@
-extends WindowDialog
+extends Panel
 
 onready var SysController = get_parent()
 onready var Adder = get_parent().get_node("AdderDialogue")
@@ -6,8 +6,7 @@ func _ready():
 	pass
 
 
-func _on_ControlDialog_popup_hide():
-	popup()
+
 
 
 

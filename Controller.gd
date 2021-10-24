@@ -26,6 +26,7 @@ extends Spatial
 var Time: float = 0
 var TimeMultiplier: float = 10
 onready var UI = get_node("ControlDialog")
+onready var InfoUI = get_node("InfoDialog")
 onready var SysOrig = get_node("SystemOrigin")
 onready var Cam = get_node("SystemOrigin/CameraHolder")
 
@@ -36,9 +37,9 @@ var Active = -1
 var TreeTracker: Dictionary #[int]leaf
 
 func _ready():
-	UI.popup()
 	MakeTree()
 	UI.get_node("VBoxContainer/VSplit/Tree").connect("cell_selected", self, "TreeNodeSelected")
+	
 	
 func _process(delta):
 	Time+=delta*TimeMultiplier
@@ -60,8 +61,10 @@ func BodySelected(b):
 	if bi!=-1:
 		Active=bi
 		TreeTracker[bi].select(0)
+
 	Cam.SetFocus(Bodies[Active])
 	SetBodyStats()
+	InfoUI.ViewBody=Bodies[Active]
 
 func TreeNodeSelected():
 	var leaf = UI.get_node("VBoxContainer/VSplit/Tree").get_selected()
@@ -70,7 +73,7 @@ func TreeNodeSelected():
 			Active=k
 	Cam.SetFocus(Bodies[Active])
 	SetBodyStats()
-	
+	InfoUI.ViewBody=Bodies[Active]
 	
 func AddBody(bname = "Body", a = 10, e = 0, br = 1000, bm=1, bParent = null, bcol = Color8(255,0,0,255))->Body:	
 	var nb: Body = Body.new()
@@ -109,8 +112,8 @@ func AddBody(bname = "Body", a = 10, e = 0, br = 1000, bm=1, bParent = null, bco
 	return nb
 func SetBodyStats():
 	var b: Body = Bodies[Active]
-	var Stats = UI.get_node("VBoxContainer/VSplit/BodyStats")
-	Stats.show()
+	var Stats = InfoUI.get_node("TabContainer/Controls")
+	#Stats.show()
 	Stats.get_node("HName/Name").text = b.name
 	Stats.get_node("HSMA/SMA").value = b.SemiMajorAxis
 	Stats.get_node("HEccentricity/Eccentricity").value = b.eccentricity
@@ -234,6 +237,19 @@ func _on_LoadDialogue_file_selected(path):
 	var res: JSONParseResult = JSON.parse(content)
 	if res.error!=OK:
 		print("Error Loading, From old version?")
+		return
+	Cam.Focus=null
+	InfoUI.ViewBody=null
+	
+	#Clear Old system
+	Bodies.resize(0)
+	for c in $SystemOrigin.get_children():
+		if c.get_class()=="Body":
+			$SystemOrigin.remove_child(c)
+			c.queue_free()
+	Active=-1
+	
+	#Decode New System
 	DecodeFile(res.result)
 
 func DecodeFile(result):
