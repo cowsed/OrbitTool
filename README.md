@@ -6,5 +6,5 @@ Featuring:
 - [ ] Manuever Nodes/Editing of velocity to change orbit like an acutal spacecraft
 
 
-![Intersection is Not yet implemented](https://github.com/cowsed/OrbitTool/blob/master/IntersectionNotImplemented.png?raw=true)
-![Moon stats](https://github.com/cowsed/OrbitTool/blob/master/MoonStats.png?raw=true)
+![Intersection is Not yet implemented](Screenshots/IntersectionNotImplemented.png)
+![Moon stats](Screenshots/MoonStats.png?raw=true)
