@@ -2,6 +2,9 @@ extends Panel
 
 onready var SysController = get_parent()
 onready var Adder = get_parent().get_node("AdderDialogue")
+
+var playing=true
+
 func _ready():
 	pass
 
@@ -41,3 +44,12 @@ func _on_ConfirmButton_pressed():
 		c
 		)
 	Adder.hide()
+
+
+func _on_PauseButton_pressed():
+	if playing:
+		playing=false
+		$VBoxContainer/PauseButton.text="Play"
+	else:
+		playing=true
+		$VBoxContainer/PauseButton.text="Pause"

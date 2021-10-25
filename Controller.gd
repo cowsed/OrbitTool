@@ -42,7 +42,8 @@ func _ready():
 	
 	
 func _process(delta):
-	Time+=delta*TimeMultiplier
+	if $ControlDialog.playing:
+		Time+=delta*TimeMultiplier
 
 func FindBodyIndex(b):
 	for bi in Bodies.size():
@@ -122,10 +123,11 @@ func SetBodyStats():
 	Stats.get_node("HPeriod/Period").value = b.Period
 	Stats.get_node("HColor/ColorPickerButton").color=b.Col
 	Stats.get_node("HSOI/SOI").value = b.CalcSOI()
+	Stats.get_node("HLoan/Loan").value = rad2deg(b.loan)
 	
 func ClearBodyStats():
 	
-	var Stats = UI.get_node("VBoxContainer/VSplit/BodyStats")
+	var Stats = InfoUI.get_node("TabContainer/Controls")
 	Stats.hide()
 	Stats.get_node("HName/Name").text = ""
 	Stats.get_node("HSMA/SemiMajorAxis").text = ""
@@ -209,7 +211,7 @@ func _on_Mass_value_changed(value):
 
 
 func _on_Loan_value_changed(value):
-	Bodies[Active].SetLOAN(value)
+	Bodies[Active].SetLOAN(deg2rad(value))
 	SetBodyStats()
 
 func _on_ColorPickerButton_color_changed(color):
@@ -229,6 +231,9 @@ func _on_SaveSystemButton_pressed():
 	
 
 func ClearSystem():
+	Time=0
+	TimeMultiplier=1
+	_on_TimeSlider_value_changed(1)
 	Cam.Focus=null
 	InfoUI.ViewBody=null
 	
@@ -307,3 +312,7 @@ func _on_SOI_value_changed(value):
 
 func _on_Clear_pressed():
 	ClearSystem()
+	MakeTree()
+	$InfoDialog.hidden=true
+	$InfoDialog._on_ShowHide_pressed()
+	$ControlDialog
