@@ -508,10 +508,10 @@ __meta__ = {
 }
 
 [node name="ControlDialog" type="Panel" parent="."]
-anchor_left = 1.0
+anchor_left = 0.81
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -199.0
+margin_left = -0.344055
 theme = ExtResource( 5 )
 script = ExtResource( 2 )
 __meta__ = {
@@ -524,27 +524,33 @@ anchor_bottom = 1.0
 margin_left = 1.0
 margin_top = 4.0
 margin_right = 1.0
-size_flags_horizontal = 3
+grow_horizontal = 0
 size_flags_vertical = 3
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="PauseButton" type="Button" parent="ControlDialog/VBoxContainer"]
-margin_right = 199.0
+margin_right = 194.0
 margin_bottom = 24.0
 text = "Pause"
 
-[node name="TimeWarpLabel" type="Label" parent="ControlDialog/VBoxContainer"]
+[node name="RewindButton" type="CheckButton" parent="ControlDialog/VBoxContainer"]
 margin_top = 28.0
-margin_right = 199.0
+margin_right = 194.0
 margin_bottom = 52.0
+text = "Reverse"
+
+[node name="TimeWarpLabel" type="Label" parent="ControlDialog/VBoxContainer"]
+margin_top = 56.0
+margin_right = 194.0
+margin_bottom = 80.0
 text = "Time Scale: 1"
 
 [node name="TimeSlider" type="HSlider" parent="ControlDialog/VBoxContainer"]
-margin_top = 56.0
-margin_right = 199.0
-margin_bottom = 72.0
+margin_top = 84.0
+margin_right = 194.0
+margin_bottom = 100.0
 max_value = 1e+08
 step = 0.001
 value = 1.0
@@ -554,14 +560,14 @@ __meta__ = {
 }
 
 [node name="AddBodyButton" type="Button" parent="ControlDialog/VBoxContainer"]
-margin_top = 76.0
-margin_right = 199.0
-margin_bottom = 100.0
+margin_top = 104.0
+margin_right = 194.0
+margin_bottom = 128.0
 text = "Add Body"
 
 [node name="VSplit" type="PanelContainer" parent="ControlDialog/VBoxContainer"]
-margin_top = 104.0
-margin_right = 199.0
+margin_top = 132.0
+margin_right = 194.0
 margin_bottom = 540.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -569,8 +575,8 @@ size_flags_vertical = 3
 [node name="Tree" type="Tree" parent="ControlDialog/VBoxContainer/VSplit"]
 margin_left = 6.0
 margin_top = 4.0
-margin_right = 193.0
-margin_bottom = 432.0
+margin_right = 188.0
+margin_bottom = 404.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_colors/relationship_line_color = Color( 1, 1, 1, 1 )
@@ -579,7 +585,7 @@ custom_constants/draw_relationship_lines = 1
 
 [node name="FileButtons" type="HSplitContainer" parent="ControlDialog/VBoxContainer"]
 margin_top = 544.0
-margin_right = 199.0
+margin_right = 194.0
 margin_bottom = 568.0
 size_flags_horizontal = 3
 __meta__ = {
@@ -587,21 +593,21 @@ __meta__ = {
 }
 
 [node name="LoadButton" type="Button" parent="ControlDialog/VBoxContainer/FileButtons"]
-margin_right = 95.0
+margin_right = 93.0
 margin_bottom = 24.0
 size_flags_horizontal = 3
 text = "Load"
 
 [node name="SaveButton" type="Button" parent="ControlDialog/VBoxContainer/FileButtons"]
-margin_left = 103.0
-margin_right = 199.0
+margin_left = 101.0
+margin_right = 194.0
 margin_bottom = 24.0
 size_flags_horizontal = 3
 text = "Save"
 
 [node name="Clear" type="Button" parent="ControlDialog/VBoxContainer"]
 margin_top = 572.0
-margin_right = 199.0
+margin_right = 194.0
 margin_bottom = 596.0
 text = "Clear System"
 
@@ -639,6 +645,7 @@ valign = 1
 [connection signal="value_changed" from="InfoDialog/TabContainer/Controls/HSOI/SOI" to="." method="_on_SOI_value_changed"]
 [connection signal="pressed" from="InfoDialog/ShowHide" to="InfoDialog" method="_on_ShowHide_pressed"]
 [connection signal="pressed" from="ControlDialog/VBoxContainer/PauseButton" to="ControlDialog" method="_on_PauseButton_pressed"]
+[connection signal="toggled" from="ControlDialog/VBoxContainer/RewindButton" to="ControlDialog" method="_on_RewindButton_toggled"]
 [connection signal="value_changed" from="ControlDialog/VBoxContainer/TimeSlider" to="." method="_on_TimeSlider_value_changed"]
 [connection signal="pressed" from="ControlDialog/VBoxContainer/AddBodyButton" to="ControlDialog" method="_on_AddBodyButton_pressed"]
 [connection signal="pressed" from="ControlDialog/VBoxContainer/FileButtons/LoadButton" to="." method="_on_LoadSystemButton_pressed"]

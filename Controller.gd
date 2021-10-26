@@ -25,6 +25,7 @@ extends Spatial
 
 var Time: float = 0
 var TimeMultiplier: float = 10
+var TimeReverser: float = 1
 onready var UI = get_node("ControlDialog")
 onready var InfoUI = get_node("InfoDialog")
 onready var SysOrig = get_node("SystemOrigin")
@@ -43,7 +44,7 @@ func _ready():
 	
 func _process(delta):
 	if $ControlDialog.playing:
-		Time+=delta*TimeMultiplier
+		Time+=delta*TimeMultiplier*TimeReverser
 		$TimePanel.set_time(Time)
 
 
@@ -167,15 +168,15 @@ func _on_TimeSlider_value_changed(value):
 	TimeMultiplier=value
 	var descString = ""
 	if TimeMultiplier<60.0:
-		descString = str(TimeMultiplier)+" Sec/RealSec"
+		descString = str(TimeMultiplier)+" Sec/sec"
 	elif TimeMultiplier<60.0*60:
-		descString = str(TimeMultiplier/60)+" min/RealSec"
+		descString = str(TimeMultiplier/60)+" min/sec"
 	elif TimeMultiplier<60.0*60*24:
-		descString = str(TimeMultiplier/(60*60))+" hour/RealSec"
+		descString = str(TimeMultiplier/(60*60))+" hour/sec"
 	else:
-		descString = str(TimeMultiplier/(24*60*60))+" days/RealSec"
+		descString = str(TimeMultiplier/(24*60*60))+" days/sec"
 
-	UI.get_node("VBoxContainer/TimeWarpLabel").text="Time Scale: "+descString
+	UI.get_node("VBoxContainer/TimeWarpLabel").text=descString
 	pass # Replace with function body.
 
 
@@ -232,6 +233,7 @@ func _on_SaveSystemButton_pressed():
 
 func ClearSystem():
 	Time=0
+	$TimePanel.set_time(Time)
 	TimeMultiplier=1
 	$ControlDialog/VBoxContainer/TimeSlider.value=1
 	_on_TimeSlider_value_changed(1)
@@ -269,6 +271,7 @@ func DecodeFile(js):
 			print(bRep, typeof(bRep)==TYPE_DICTIONARY)
 			AddBodyFromDict(bRep)
 	Time = float(t)
+	$TimePanel.set_time(Time)
 func AddBodyFromDict(d, par=null) -> Body:
 	var ecc=float(d["eccentricity"])
 	var sma = float(d["semimajoraxis"])

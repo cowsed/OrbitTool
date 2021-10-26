@@ -21,12 +21,12 @@ func _process(delta):
 	if ViewBody!=null:
 		$TabContainer/Stats/NameLabel.text=ViewBody.name
 		var v = ViewBody.VelAt(Controller.Time)
-		$TabContainer/Stats/SpeedLabel.text="Speed: "+str(v.length()/1000)+" km/s"
+		$TabContainer/Stats/SpeedLabel.text="Speed: %.3f km/s" % (v.length()/1000)
 		$TabContainer/Stats/Velocity/x.value=v.x/1000
 		$TabContainer/Stats/Velocity/z.value=v.y/1000
 		$TabContainer/Stats/Velocity/z.value=v.z/1000
 		var h = ViewBody.HeightAt(Controller.Time)
-		$TabContainer/Stats/HeightLabel.text = "Height: "+str(h/1000)+" km"
+		$TabContainer/Stats/HeightLabel.text = "Height: %.3f km"% (h/1000)
 		
 
 

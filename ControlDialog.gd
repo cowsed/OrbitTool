@@ -46,3 +46,10 @@ func _on_PauseButton_pressed():
 	else:
 		playing=true
 		$VBoxContainer/PauseButton.text="Pause"
+
+
+func _on_RewindButton_toggled(button_pressed):
+	if button_pressed:
+		SysController.TimeReverser=-1
+	else:
+		SysController.TimeReverser=1
