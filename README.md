@@ -2,7 +2,7 @@
 Featuring:
 - [x] Editing oribital parameter
 - [x] Realistic velocity and position according to time
-- [x] Saving and loading scenes from files1
+- [x] Saving and loading scenes from files
 - [ ] Manuever Nodes/Editing of velocity to change orbit like an acutal spacecraft
 
 

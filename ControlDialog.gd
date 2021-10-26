@@ -10,15 +10,6 @@ func _ready():
 
 
 
-
-
-
-
-
-
-
-
-
 func _on_AddBodyButton_pressed():
 	Adder.popup_centered(Vector2(get_viewport().size.x/2.0,0))
 
@@ -34,12 +25,14 @@ func _on_ConfirmButton_pressed():
 	var r = float(Adder.get_node("ParameterHolder/Radius").text)
 	var m = float(Adder.get_node("ParameterHolder/Mass").text)
 	var c = Adder.get_node("ParameterHolder/HBoxContainer/ColorPickerButton").color
+	var loan=0
 	SysController.AddBody(
 		Name,
 		a,
 		e,
 		r,
 		m,
+		loan,
 		null, 
 		c
 		)

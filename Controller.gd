@@ -44,6 +44,8 @@ func _ready():
 func _process(delta):
 	if $ControlDialog.playing:
 		Time+=delta*TimeMultiplier
+		$TimePanel.set_time(Time)
+
 
 func FindBodyIndex(b):
 	for bi in Bodies.size():
@@ -76,7 +78,7 @@ func TreeNodeSelected():
 	SetBodyStats()
 	InfoUI.ViewBody=Bodies[Active]
 	
-func AddBody(bname = "Body", a = 10, e = 0, br = 1000, bm=1, bParent = null, bcol = Color8(255,0,0,255))->Body:	
+func AddBody(bname = "Body", a = 10, e = 0, br = 1000, bm=1, bloan=0, bParent = null, bcol = Color8(255,0,0,255))->Body:	
 	var nb: Body = Body.new()
 	nb.Controller=self
 	
@@ -94,6 +96,7 @@ func AddBody(bname = "Body", a = 10, e = 0, br = 1000, bm=1, bParent = null, bco
 	nb.SetMass(bm)
 	nb.SetSMA(a)
 	nb.SetE(e)
+	nb.SetLOAN(bloan)
 	nb.Col=bcol
 	
 	nb.MakeOrbitRep()
@@ -175,10 +178,7 @@ func _on_TimeSlider_value_changed(value):
 	UI.get_node("VBoxContainer/TimeWarpLabel").text="Time Scale: "+descString
 	pass # Replace with function body.
 
-#34.65 sec for one rev
-#5.1667 days per sec
-#period 2419200
-# should be near one month
+
 func _on_Name_text_entered(new_text):
 	Bodies[Active].name=new_text
 	MakeTree()
@@ -233,6 +233,7 @@ func _on_SaveSystemButton_pressed():
 func ClearSystem():
 	Time=0
 	TimeMultiplier=1
+	$ControlDialog/VBoxContainer/TimeSlider.value=1
 	_on_TimeSlider_value_changed(1)
 	Cam.Focus=null
 	InfoUI.ViewBody=null
@@ -259,24 +260,26 @@ func _on_LoadDialogue_file_selected(path):
 	#Decode New System
 	DecodeFile(res.result)
 
-func DecodeFile(result):
+func DecodeFile(js):
+	var t = js["time"]
+	var result = js["system"]
 	if typeof(result) == TYPE_ARRAY:
 		print("Good", len(result))
 		for bRep in result:
 			print(bRep, typeof(bRep)==TYPE_DICTIONARY)
 			AddBodyFromDict(bRep)
-	
+	Time = float(t)
 func AddBodyFromDict(d, par=null) -> Body:
 	var ecc=float(d["eccentricity"])
 	var sma = float(d["semimajoraxis"])
-	print_debug("Loaded Mass = ",float(d["mass"]))
+	print_debug("Loaded loan = ",float(d["loan"]))
 	var mass = float(d["mass"])
 	var loan = float(d["loan"])
 	var new_name = d["name"]
-	var rad = d["radius"]
+	var rad = float(d["radius"])
 	var col_rep = d["color"]
 	var col: Color = Color(col_rep)
-	var me = AddBody(new_name, sma, ecc, rad, mass, par, col)
+	var me = AddBody(new_name, sma, ecc, rad, mass, loan, par, col)
 	print_debug("In Node Mass = ",me.Mass)
 	
 	
@@ -288,6 +291,7 @@ func AddBodyFromDict(d, par=null) -> Body:
 	return me
 func _on_SaveDialogue_file_selected(path):
 	print("save to ",path)
+	var full = '{ "time":"'+str(Time)+'",'
 	var res="["
 	for c in $SystemOrigin.get_children():
 		if c.get_class()=="Body":
@@ -296,6 +300,7 @@ func _on_SaveDialogue_file_selected(path):
 	
 	res=res.substr(0,res.length()-1) #Hacky way to remove trailing comma
 	res+="]"
+	res= full+'"system":'+res+"}"
 	print(res)
 	var file = File.new()
 	file.open(path, File.WRITE)

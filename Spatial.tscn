@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Controller.gd" type="Script" id=1]
 [ext_resource path="res://ControlDialog.gd" type="Script" id=2]
 [ext_resource path="res://CameraHolder.gd" type="Script" id=3]
 [ext_resource path="res://InfoDialog.gd" type="Script" id=4]
 [ext_resource path="res://Assets/SpaceTheme.tres" type="Theme" id=5]
+[ext_resource path="res://TimePanel.gd" type="Script" id=6]
 
 [sub_resource type="ImageTexture" id=1]
 
@@ -298,10 +299,10 @@ text = "Height: "
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 4.0
-margin_top = 32.0
-margin_right = -4.0
-margin_bottom = -4.0
+margin_left = 5.0
+margin_top = 31.0
+margin_right = -5.0
+margin_bottom = -5.0
 size_flags_vertical = 3
 
 [node name="HName" type="HSplitContainer" parent="InfoDialog/TabContainer/Controls"]
@@ -603,6 +604,24 @@ margin_top = 572.0
 margin_right = 199.0
 margin_bottom = 596.0
 text = "Clear System"
+
+[node name="TimePanel" type="Panel" parent="."]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -97.0
+margin_right = 97.0
+margin_bottom = 40.0
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="TimePanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "0 days, 0:00 - 00"
+align = 1
+valign = 1
 
 [connection signal="dir_selected" from="LoadDialogue" to="." method="_on_LoadDialogue_dir_selected"]
 [connection signal="file_selected" from="LoadDialogue" to="." method="_on_LoadDialogue_file_selected"]
